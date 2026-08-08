@@ -1,0 +1,17 @@
+# Secrets — never commit these
+.env
+.env.*
+!.env.example
+config.js
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Node (in case you add tooling later)
+node_modules/
+dist/
+build/

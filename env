@@ -1,0 +1,7 @@
+# Reference only — plain client-side HTML/JS can't read .env directly (no build step).
+# These same values live in config.js, which is what index.html actually loads.
+# Keep this .env in sync if you later move to a bundler (Vite/Next) or a backend that reads env vars.
+
+SUPABASE_URL=https://bwmgaalnqjvtdxxmzvrv.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3bWdhYWxucWp2dGR4eG16dnJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMDM3MzYsImV4cCI6MjEwMTY3OTczNn0.pAfHowmpj_F11CLRXDSRlcTCrlw6dRdF6qVCDk9Cg8E
+ADMIN_PASSWORD=ES1234
