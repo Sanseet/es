@@ -1,1340 +1,2041 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0b0c10">
-<title>EditorsSpace: Connect. Compete. Collaborate.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Inter:wght@400..900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg-dark:#0b0c10;
-  --bg-surface:#13151b;
-  --bg-surface-elevated:#1a1d26;
-  --text-primary:#f8f6f0;
-  --text-muted:rgba(248,246,240,0.65);
-  --accent-red:#ff2a4b;
-  --accent-yellow:#f5e625;
-  --accent-blue:#0055ff;
-  --accent-violet:#9d00ff;
-  --green:#34D399;
-  --font-display:'Oswald',-apple-system,sans-serif;
-  --font-ui:'Inter',-apple-system,sans-serif;
-  --font-hand:'Caveat',cursive;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;background-color:var(--bg-dark);}
-body{
-  font-family:var(--font-ui);
-  background:var(--bg-dark);
-  color:var(--text-primary);
-  overflow-x:hidden;
-  line-height:1.6;
-  -webkit-font-smoothing:antialiased;
-}
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:0.12;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-.halftone-bg{position:fixed;inset:0;pointer-events:none;z-index:-10;opacity:0.4;
-  background-image:radial-gradient(rgba(248,246,240,0.08) 1px, transparent 1px);background-size:16px 16px;}
-::selection{background:var(--accent-red);color:#fff;}
-::-webkit-scrollbar{width:6px;}
-::-webkit-scrollbar-track{background:var(--bg-dark);}
-::-webkit-scrollbar-thumb{background:var(--accent-red);}
-a:focus-visible,button:focus-visible{outline:2px solid var(--accent-yellow);outline-offset:3px;}
-h1,h2,h3,h4,h5,h6{font-family:var(--font-display);text-transform:uppercase;font-weight:700;letter-spacing:-0.01em;}
-.font-hero{font-family:var(--font-display);letter-spacing:-0.01em;line-height:0.92;text-transform:uppercase;font-weight:700;}
-.font-mono{font-family:var(--font-ui);font-weight:800;letter-spacing:0.06em;}
-.eyebrow{font-family:var(--font-ui);font-size:0.75rem;font-weight:900;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent-red);display:block;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0c10">
+  <title>EditorSpace — Your Creative World Deserves a Home</title>
+  <meta name="description" content="EditorSpace is building a dedicated creative space where creators can discover, connect, collaborate, compete, and build their creative reputation.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Inter:wght@400..900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
 
-@keyframes fadeInUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
-@keyframes floatSlow{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.25;}}
-@keyframes rotateSlow{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-@keyframes scrub{0%{left:0%;}100%{left:100%;}}
-@keyframes wave{0%,100%{transform:scaleY(0.3);}50%{transform:scaleY(1);}}
-@keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
-@keyframes ripple{to{transform:scale(3);opacity:0;}}
+  <style>
+    :root {
+      --bg-dark: #0b0c10;
+      --bg-surface: #13151b;
+      --bg-surface-elevated: #1a1d26;
+      --text-primary: #f8f6f0;
+      --text-muted: rgba(248, 246, 240, 0.65);
+      
+      /* Accents */
+      --accent-red: #ff2a4b;
+      --accent-yellow: #f5e625;
+      --accent-blue: #0055ff;
+      --accent-violet: #9d00ff;
+      
+      /* Typography */
+      --font-display: 'Oswald', -apple-system, sans-serif;
+      --font-ui: 'Inter', -apple-system, sans-serif;
+      --font-hand: 'Caveat', cursive;
+      
+      --z-bg: -10;
+      --z-content: 50;
+      --z-navbar: 1000;
+    }
 
-.animate-in{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
-.animate-in.visible{opacity:1;transform:translateY(0);}
-.animate-scale{opacity:0;transform:scale(0.94);transition:all .8s cubic-bezier(.16,1,.3,1);}
-.animate-scale.visible{opacity:1;transform:scale(1);}
-.wipeText{position:relative;display:inline-block;overflow:hidden;}
-.wipeText::after{content:'';position:absolute;inset:0;background:var(--bg-dark);transform:translateX(0%);transition:transform .95s cubic-bezier(.65,0,.35,1);}
-.wipeText.visible::after{transform:translateX(101%);}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-#scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--accent-red),var(--accent-yellow));z-index:2000;transition:width .1s linear;}
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-dark);
+    }
 
-/* ---------------- NAV ---------------- */
-nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.5rem 4rem;display:flex;justify-content:space-between;align-items:center;transition:all .3s ease;}
-nav.scrolled{background:rgba(11,12,16,0.94);backdrop-filter:blur(16px);border-bottom:2px solid rgba(248,246,240,0.12);padding:0.9rem 4rem;box-shadow:0 10px 30px rgba(0,0,0,0.6);}
-.nav-right{display:flex;align-items:center;gap:1rem;}
-.logo{font-family:var(--font-display);font-size:1.7rem;font-weight:700;letter-spacing:0.04em;color:var(--text-primary);text-decoration:none;display:flex;align-items:center;gap:0.5rem;text-transform:uppercase;transition:color .2s;}
-.logo:hover{color:var(--accent-yellow);}
-.logo span{color:var(--accent-red);}
-.logo::before{content:'';width:8px;height:8px;background:var(--accent-red);box-shadow:0 0 10px var(--accent-red);animation:blink 2.4s infinite;}
-.nav-links{display:flex;gap:2.2rem;list-style:none;}
-.nav-links a{color:var(--text-primary);text-decoration:none;font-size:0.8rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;opacity:0.75;transition:opacity .2s,color .2s;}
-.nav-links a:hover{opacity:1;color:var(--accent-yellow);}
-.nav-cta{font-family:var(--font-display);font-size:1rem;font-weight:700;text-transform:uppercase;background:var(--accent-red);color:var(--text-primary);border:2px solid var(--text-primary);border-radius:0;padding:8px 18px;box-shadow:4px 4px 0 var(--text-primary);cursor:pointer;transition:all .2s ease;position:relative;overflow:hidden;}
-.nav-cta:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--accent-yellow);background:var(--accent-yellow);color:var(--bg-dark);}
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
 
-/* ---------------- HERO ---------------- */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:10rem 4rem 6rem;}
-.hero-top{position:relative;z-index:10;max-width:1320px;width:100%;margin:0 auto;display:grid;grid-template-columns:0.8fr 1.2fr;gap:4.5rem;align-items:center;}
-.hero-content{width:100%;text-align:left;}
-.hero-badge{display:inline-flex;align-items:center;gap:0.6rem;background:var(--bg-surface);border:2px solid var(--text-primary);padding:0.5rem 1.1rem;border-radius:0;margin-bottom:2.2rem;animation:fadeInUp .8s ease-out;}
-.hero-badge .dot{width:6px;height:6px;background:var(--accent-red);border-radius:50%;animation:blink 1.6s infinite;}
-.hero h1{font-size:clamp(3.2rem,8vw,6.8rem);margin-bottom:1.4rem;animation:fadeInUp 1s ease-out .15s both;}
-.hero h1 .line{display:block;}
-.hero h1 .line.accent{color:var(--accent-red);text-shadow:6px 6px 0 var(--accent-yellow),-2px -2px 0 var(--bg-dark);}
-.hero-subtitle{font-size:clamp(1.1rem,1.8vw,1.3rem);color:var(--text-muted);max-width:520px;margin:0 0 2.6rem;font-weight:500;border-left:3px solid var(--accent-yellow);padding-left:1.25rem;line-height:1.4;animation:fadeInUp 1s ease-out .3s both;}
-.hero-buttons{display:flex;gap:1rem;justify-content:flex-start;flex-wrap:wrap;animation:fadeInUp 1s ease-out .45s both;}
-.btn-primary{background:var(--text-primary);color:var(--bg-dark);border:3px solid var(--text-primary);padding:1rem 2.3rem;font-family:var(--font-display);font-size:1.05rem;font-weight:700;text-transform:uppercase;border-radius:0;cursor:pointer;transition:transform .2s cubic-bezier(.16,1,.3,1),box-shadow .2s cubic-bezier(.16,1,.3,1),background .2s ease;box-shadow:6px 6px 0 var(--accent-red);position:relative;overflow:hidden;}
-.btn-primary:hover{transform:translate(-3px,-3px);box-shadow:10px 10px 0 var(--accent-yellow);background:var(--accent-yellow);color:var(--bg-dark);}
-.btn-secondary{background:transparent;color:var(--text-primary);border:3px solid var(--text-primary);padding:1rem 2.3rem;font-family:var(--font-display);font-size:1.05rem;font-weight:700;text-transform:uppercase;border-radius:0;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;gap:0.6rem;position:relative;overflow:hidden;}
-.btn-secondary:hover{border-color:var(--accent-yellow);color:var(--accent-yellow);transform:translateY(-2px);}
-.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.35);transform:scale(0);pointer-events:none;animation:ripple .6s ease-out;}
+    /* Grain and Halftone Overlay */
+    .texture-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      mix-blend-mode: overlay;
+      opacity: 0.12;
+      background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+    }
 
-.hero-portfolio{background:var(--bg-surface);border:3px solid var(--text-primary);border-radius:0;padding:1.15rem 1.5rem;color:var(--text-primary);box-shadow:12px 12px 0 var(--accent-blue);animation:fadeInUp 1s ease-out .5s both;}
-.hp-profile{display:flex;align-items:center;gap:0.9rem;padding-bottom:0.75rem;border-bottom:2px solid rgba(248,246,240,0.12);margin-bottom:0.75rem;}
-.hp-avatar{width:42px;height:42px;border-radius:50%;flex-shrink:0;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-size:1.1rem;letter-spacing:0.02em;}
-.hp-profile-info{flex:1;min-width:0;}
-.hp-profile-info h4{font-size:0.94rem;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:0.4rem;text-transform:none;font-family:var(--font-ui);}
-.hp-verified{width:14px;height:14px;border-radius:50%;background:var(--accent-blue);color:#fff;font-size:0.56rem;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
-.hp-profile-info .role{font-size:0.72rem;color:var(--text-muted);margin-top:0.1rem;}
-.hp-status-pill{font-family:var(--font-ui);font-weight:800;font-size:0.6rem;letter-spacing:0.06em;background:rgba(0,85,255,0.12);border:1px solid var(--accent-blue);color:var(--accent-blue);padding:0.26rem 0.55rem;border-radius:0;text-transform:uppercase;white-space:nowrap;}
-.hp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0.55rem;margin-bottom:0.75rem;}
-.hp-stat{background:var(--bg-dark);border:2px solid rgba(248,246,240,0.15);border-radius:0;padding:0.45rem 0.5rem;text-align:center;}
-.hp-stat .num{font-family:var(--font-display);font-weight:700;font-size:1.05rem;color:var(--text-primary);}
-.hp-stat .lbl{font-size:0.56rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-top:0.1rem;}
-.hero-portfolio-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.55rem;}
-.hero-portfolio-head .hp-title{font-size:0.72rem;font-weight:900;color:var(--accent-yellow);text-transform:uppercase;letter-spacing:0.08em;}
-.hero-portfolio-head .hp-count{font-family:var(--font-ui);font-weight:700;font-size:0.62rem;color:var(--text-muted);}
-.reel-list{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;}
-.reel-item{display:flex;align-items:center;gap:0.7rem;background:var(--bg-dark);border:2px solid rgba(248,246,240,0.12);border-radius:0;padding:0.5rem;transition:transform .2s ease,border-color .2s ease,background .2s ease;}
-.reel-item:hover{transform:translateX(4px);border-color:var(--accent-blue);background:rgba(0,85,255,0.06);}
-.reel-thumb{position:relative;width:38px;height:38px;flex-shrink:0;border-radius:0;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;background:var(--accent-blue);}
-.reel-info{flex:1;min-width:0;}
-.reel-info h4{font-size:0.78rem;font-weight:700;color:var(--text-primary);margin-bottom:0.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:none;font-family:var(--font-ui);}
-.reel-meta{display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;}
-.reel-progress{flex:1;height:4px;border-radius:0;background:rgba(248,246,240,0.15);overflow:hidden;max-width:50px;}
-.reel-progress span{display:block;height:100%;background:var(--accent-blue);}
-.reel-tag{font-family:var(--font-ui);font-weight:800;font-size:0.55rem;letter-spacing:0.04em;color:var(--text-muted);text-transform:uppercase;white-space:nowrap;}
-.reel-time{font-family:var(--font-ui);font-weight:800;font-size:0.62rem;color:var(--accent-blue);flex-shrink:0;}
-.hero-portfolio-foot{display:flex;justify-content:space-between;align-items:center;margin-top:0.75rem;padding-top:0.7rem;border-top:2px solid rgba(248,246,240,0.12);}
-.hp-link{font-size:0.75rem;font-weight:800;color:var(--accent-yellow);text-decoration:none;display:flex;align-items:center;gap:0.35rem;transition:gap .2s;}
-.hp-link:hover{gap:0.6rem;}
-.hp-live{font-family:var(--font-ui);font-weight:700;font-size:0.6rem;color:var(--text-muted);display:flex;align-items:center;gap:0.4rem;}
-.hp-live .d{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 1.6s infinite;}
+    .halftone-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(rgba(248, 246, 240, 0.08) 1px, transparent 1px);
+      background-size: 16px 16px;
+      opacity: 0.4;
+      z-index: var(--z-bg);
+    }
 
-.scrubber{position:relative;z-index:10;max-width:1320px;width:100%;margin:4.5rem auto 0;background:var(--bg-surface);border:3px solid var(--text-primary);border-radius:0;box-shadow:10px 10px 0 var(--accent-red);padding:1.6rem 2rem 1.4rem;animation:fadeInUp 1s ease-out .6s both;}
-.scrubber-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;}
-.scrubber-timecode{font-family:var(--font-ui);font-weight:800;font-size:1.05rem;color:var(--accent-yellow);letter-spacing:0.05em;}
-.scrubber-rec{font-family:var(--font-ui);font-weight:800;font-size:0.7rem;letter-spacing:0.1em;color:var(--accent-red);display:flex;align-items:center;gap:0.4rem;text-transform:uppercase;}
-.scrubber-rec .d{width:6px;height:6px;border-radius:50%;background:var(--accent-red);animation:blink 1.2s infinite;}
-.waveform{display:flex;align-items:flex-end;gap:3px;height:34px;margin-bottom:1rem;}
-.waveform span{flex:1;background:linear-gradient(180deg,var(--accent-yellow),var(--accent-red));border-radius:1px;transform-origin:bottom;animation:wave 1.4s ease-in-out infinite;opacity:0.6;}
-.scrubber-ruler{position:relative;height:34px;border-top:1px solid rgba(248,246,240,0.15);border-bottom:1px solid rgba(248,246,240,0.15);margin-top:2.4rem;background:repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,0.05) 39px,rgba(255,255,255,0.05) 40px);}
-.playhead{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--accent-red);box-shadow:0 0 12px rgba(255,42,75,0.7);animation:scrub 17s linear infinite;left:0;}
-.chapter{position:absolute;top:-2.4rem;transform:translateX(-50%);text-align:center;}
-.chapter .cdot{width:5px;height:5px;border-radius:50%;background:var(--accent-yellow);margin:0 auto 6px;}
-.chapter span{font-family:var(--font-ui);font-weight:800;font-size:0.62rem;letter-spacing:0.06em;color:var(--text-muted);white-space:nowrap;}
+    /* Floating particles */
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+    }
 
-/* ---------------- TRUSTED / STATS / TOOLS ---------------- */
-.trusted{padding:4.5rem 0;text-align:center;position:relative;border-top:2px solid rgba(248,246,240,0.1);border-bottom:2px solid rgba(248,246,240,0.1);}
-.trusted-label{font-family:var(--font-ui);font-size:0.75rem;font-weight:900;color:var(--accent-red);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:2rem;}
-.marquee-wrap{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,black 10%,black 90%,transparent);mask-image:linear-gradient(90deg,transparent,black 10%,black 90%,transparent);}
-.marquee{display:flex;gap:5rem;width:max-content;animation:marquee 26s linear infinite;}
-.marquee-wrap:hover .marquee{animation-play-state:paused;}
-.marquee span{font-family:var(--font-display);font-size:1.5rem;color:var(--text-muted);letter-spacing:0.04em;white-space:nowrap;text-transform:uppercase;}
+    /* Scroll-triggered flow animations */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.94);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-scale.in-view { opacity: 1; transform: scale(1); }
+    .reveal-group > * {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-group.in-view > * { opacity: 1; transform: translateY(0); }
+    .reveal-group.in-view > *:nth-child(1) { transition-delay: 0.03s; }
+    .reveal-group.in-view > *:nth-child(2) { transition-delay: 0.09s; }
+    .reveal-group.in-view > *:nth-child(3) { transition-delay: 0.15s; }
+    .reveal-group.in-view > *:nth-child(4) { transition-delay: 0.21s; }
+    .reveal-group.in-view > *:nth-child(5) { transition-delay: 0.27s; }
+    .reveal-group.in-view > *:nth-child(6) { transition-delay: 0.33s; }
+    .reveal-group.in-view > *:nth-child(7) { transition-delay: 0.39s; }
+    .reveal-group.in-view > *:nth-child(8) { transition-delay: 0.45s; }
+    .reveal-group.in-view > *:nth-child(n+9) { transition-delay: 0.5s; }
 
-.stat-band{padding:5rem 4rem;border-bottom:2px solid rgba(248,246,240,0.1);position:relative;}
-.stat-band-grid{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;}
-.stat-band-item{text-align:center;padding:0 1rem;border-left:2px solid rgba(248,246,240,0.12);}
-.stat-band-item:first-child{border-left:none;}
-.stat-band-item h3{font-family:var(--font-display);font-size:2.8rem;font-weight:700;color:var(--text-primary);margin-bottom:0.5rem;}
-.stat-band-item h3 span{color:var(--accent-red);}
-.stat-band-item p{color:var(--text-muted);font-size:0.85rem;}
+    /* Hero loads in immediately, staggered */
+    .hero-load-1 { animation: fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both; }
+    .hero-load-2 { animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both; }
+    .hero-load-3 { animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both; }
+    .hero-load-4 { animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.46s both; }
 
-.tools-strip{padding:5rem 4rem;position:relative;}
-.tools-strip-inner{max-width:1200px;margin:0 auto;}
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;}
-.tool-chip{background:var(--bg-surface);border:2px solid rgba(248,246,240,0.15);border-radius:0;padding:1.2rem 1.4rem;display:flex;align-items:center;gap:0.8rem;transition:border-color .2s,transform .2s;}
-.tool-chip:hover{border-color:var(--accent-yellow);transform:translateY(-3px);}
-.tool-chip .glyph{width:32px;height:32px;border-radius:0;background:var(--bg-dark);border:2px solid var(--text-primary);display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:var(--accent-yellow);flex-shrink:0;font-family:var(--font-display);}
-.tool-chip .tname{font-size:0.88rem;font-weight:700;}
-.tool-chip .tsub{font-size:0.72rem;color:var(--text-muted);font-family:var(--font-ui);}
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal-scale, .reveal-group > *, .hero-load-1, .hero-load-2, .hero-load-3, .hero-load-4 {
+        opacity: 1 !important; transform: none !important; animation: none !important;
+      }
+    }
 
-/* ---------------- FEATURES ---------------- */
-.features{padding:8rem 4rem;position:relative;}
-.section-header{text-align:center;margin-bottom:5rem;}
-.section-header .eyebrow{display:block;margin-bottom:1rem;}
-.section-header h2{font-size:clamp(2.4rem,5.4vw,4.2rem);margin-bottom:1rem;}
-.section-header p{color:var(--text-muted);font-size:1.05rem;max-width:500px;margin:0 auto;}
-.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;max-width:1400px;margin:0 auto;}
-.feature-card{background:var(--bg-surface);border:3px solid var(--text-primary);border-radius:0;padding:2.4rem;position:relative;overflow:hidden;transition:transform .2s cubic-bezier(.16,1,.3,1),border-color .2s;box-shadow:10px 10px 0 var(--accent-red);}
-.feature-card:nth-child(4n+2){box-shadow:10px 10px 0 var(--accent-yellow);}
-.feature-card:nth-child(4n+3){box-shadow:10px 10px 0 var(--accent-blue);}
-.feature-card:nth-child(4n+4){box-shadow:10px 10px 0 var(--accent-violet);}
-.feature-card:hover{transform:translate(-3px,-3px);}
-.feature-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.6rem;}
-.feature-icon{width:44px;height:44px;background:var(--bg-dark);border:2px solid var(--text-primary);border-radius:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--accent-red);}
-.feature-tag{font-family:var(--font-ui);font-weight:800;font-size:0.62rem;letter-spacing:0.08em;color:var(--accent-yellow);border:1px solid var(--accent-yellow);padding:0.2rem 0.5rem;border-radius:0;text-transform:uppercase;}
-.feature-card h3{font-size:1.2rem;margin-bottom:0.7rem;font-weight:700;}
-.feature-card p{color:var(--text-muted);font-size:0.92rem;line-height:1.7;margin-bottom:1.2rem;}
-.feature-stat{font-family:var(--font-ui);font-weight:800;font-size:0.72rem;color:var(--accent-yellow);border-top:1px solid rgba(248,246,240,0.15);padding-top:1rem;display:block;}
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
 
-/* ---------------- WORKFLOW ---------------- */
-.workflow{padding:8rem 4rem;background:var(--bg-surface);position:relative;overflow:hidden;}
-.workflow-steps{display:flex;justify-content:center;gap:0;max-width:1200px;margin:0 auto;position:relative;z-index:2;flex-wrap:wrap;}
-.workflow-step{flex:1;min-width:230px;max-width:280px;text-align:center;position:relative;padding:0 1rem;}
-.workflow-step::after{content:'';position:absolute;top:2.4rem;right:-1rem;width:2rem;height:2px;background:rgba(248,246,240,0.15);}
-.workflow-step:last-child::after{display:none;}
-.step-number{width:64px;height:64px;background:var(--bg-dark);border:2px solid var(--text-primary);border-radius:0;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-family:var(--font-display);font-size:1.1rem;color:var(--accent-yellow);transition:border-color .2s,color .2s;}
-.workflow-step:hover .step-number{border-color:var(--accent-red);color:var(--accent-red);}
-.workflow-step h3{font-size:1.15rem;margin-bottom:0.5rem;}
-.workflow-step p{color:var(--text-muted);font-size:0.88rem;}
+    .container {
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 5vw;
+    }
 
-/* ---------------- COMMUNITY ---------------- */
-.community{padding:8rem 4rem;position:relative;}
-.community-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;max-width:1400px;margin:0 auto;align-items:center;}
-.community-visual{position:relative;height:480px;}
-.community-visual .panel{position:absolute;background:var(--bg-surface);border:3px solid var(--text-primary);border-radius:0;overflow:hidden;transition:transform .3s,box-shadow .3s;}
-.community-visual .panel:hover{transform:scale(1.03) !important;z-index:10;}
-.panel-1{width:60%;height:44%;top:0;left:0;transform:rotate(-1.5deg);box-shadow:10px 10px 0 var(--accent-red);}
-.panel-2{width:44%;height:48%;top:10%;right:0;transform:rotate(1deg);box-shadow:10px 10px 0 var(--accent-yellow);}
-.panel-3{width:50%;height:38%;bottom:0;left:10%;transform:rotate(0.6deg);box-shadow:10px 10px 0 var(--accent-blue);}
-.panel-content{padding:1.4rem;height:100%;display:flex;flex-direction:column;justify-content:flex-end;}
-.panel-content .avatar-row{display:flex;margin-bottom:1rem;}
-.panel-content .avatar{width:34px;height:34px;border-radius:50%;background:var(--bg-dark);border:2px solid var(--bg-surface);margin-left:-0.5rem;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;font-family:var(--font-ui);color:var(--text-primary);}
-.panel-content .avatar:first-child{margin-left:0;}
-.panel-content h4{font-size:0.98rem;margin-bottom:0.25rem;text-transform:none;font-family:var(--font-ui);}
-.panel-content span{font-size:0.78rem;color:var(--text-muted);}
-.community-text h2{font-size:clamp(2rem,4vw,3.2rem);margin-bottom:1.4rem;line-height:1.1;}
-.community-text p{color:var(--text-muted);margin-bottom:2rem;font-size:1rem;line-height:1.8;}
-.stat-row{display:flex;gap:3rem;margin-top:3rem;}
-.stat-item h3{font-family:var(--font-display);font-size:2.4rem;color:var(--accent-yellow);font-weight:700;}
-.stat-item span{color:var(--text-muted);font-size:0.8rem;}
+    .section-chapter-tag {
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      color: var(--accent-red);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
 
-/* ---------------- AI DIRECTOR ---------------- */
-.ai-director{padding:8rem 4rem;background:var(--bg-surface);position:relative;overflow:hidden;}
-.ai-content{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;position:relative;z-index:2;}
-.ai-text h2{font-size:clamp(2rem,4vw,3.2rem);margin-bottom:1.4rem;}
-.ai-text h2 span{color:var(--accent-red);}
-.ai-text p{color:var(--text-muted);margin-bottom:2rem;font-size:1rem;line-height:1.8;}
-.ai-features-list{list-style:none;display:flex;flex-direction:column;gap:1rem;}
-.ai-features-list li{display:flex;align-items:center;gap:1rem;color:var(--text-primary);font-size:0.95rem;}
-.ai-features-list li::before{content:'▸';color:var(--accent-yellow);font-size:1.1rem;}
-.ai-visual{position:relative;height:380px;}
-.ai-visual .orbit{position:absolute;border:1px solid rgba(248,246,240,0.15);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);}
-.orbit-1{width:290px;height:290px;animation:rotateSlow 22s linear infinite;}
-.orbit-2{width:190px;height:190px;animation:rotateSlow 16s linear infinite reverse;}
-.orbit-3{width:100px;height:100px;}
-.orbit-node{position:absolute;width:38px;height:38px;background:var(--bg-dark);border:2px solid var(--accent-red);border-radius:0;display:flex;align-items:center;justify-content:center;font-size:1.05rem;color:var(--text-primary);}
-.ai-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:74px;height:74px;background:var(--bg-dark);border:2px solid var(--accent-yellow);border-radius:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;color:var(--accent-yellow);animation:floatSlow 5s ease-in-out infinite;}
+    .section-main-title {
+      font-size: clamp(3rem, 8vw, 8rem);
+      line-height: 0.92;
+      color: var(--text-primary);
+      margin-bottom: 1.25rem;
+    }
 
-/* ---------------- TESTIMONIALS ---------------- */
-.testimonials{padding:8rem 4rem;position:relative;}
-.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem;max-width:1400px;margin:0 auto;}
-.testimonial-card{background:var(--bg-surface);border:3px solid var(--text-primary);border-radius:0;padding:2.4rem;position:relative;transition:transform .2s;box-shadow:8px 8px 0 var(--accent-red);}
-.testimonial-card:nth-child(4n+2){box-shadow:8px 8px 0 var(--accent-yellow);}
-.testimonial-card:nth-child(4n+3){box-shadow:8px 8px 0 var(--accent-blue);}
-.testimonial-card:nth-child(4n+4){box-shadow:8px 8px 0 var(--accent-violet);}
-.testimonial-card:hover{transform:translate(-3px,-3px);}
-.testimonial-card::before{content:'"';position:absolute;top:1.2rem;right:1.6rem;font-family:var(--font-display);font-size:4.5rem;color:rgba(255,42,75,0.12);line-height:1;}
-.testimonial-text{font-size:1.02rem;line-height:1.8;margin-bottom:2rem;color:var(--text-primary);}
-.testimonial-author{display:flex;align-items:center;gap:1rem;}
-.testimonial-author .avatar{width:44px;height:44px;border-radius:50%;background:var(--bg-dark);border:2px solid var(--text-primary);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--font-ui);font-size:0.8rem;color:var(--accent-yellow);}
-.testimonial-author .name{font-weight:700;font-size:0.95rem;}
-.testimonial-author .role{font-size:0.82rem;color:var(--text-muted);}
-.rating-strip{display:flex;justify-content:center;align-items:center;gap:0.8rem;margin-top:3rem;}
-.rating-strip .stars{color:var(--accent-yellow);letter-spacing:0.1em;}
-.rating-strip span.font-mono{color:var(--text-muted);font-size:0.8rem;font-weight:600;}
+    .section-subtitle-text {
+      font-family: var(--font-ui);
+      font-size: clamp(1.1rem, 2vw, 1.35rem);
+      line-height: 1.55;
+      color: var(--text-muted);
+      max-width: 780px;
+    }
 
-/* ---------------- PRICING ---------------- */
-.pricing{padding:8rem 4rem;background:var(--bg-surface);position:relative;}
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;max-width:1200px;margin:0 auto;align-items:start;}
-.pricing-card{background:var(--bg-dark);border:3px solid var(--text-primary);border-radius:0;padding:2.8rem 2rem;position:relative;transition:transform .2s;box-shadow:8px 8px 0 var(--accent-blue);}
-.pricing-card.featured{border-color:var(--accent-red);box-shadow:12px 12px 0 var(--accent-red);}
-.pricing-card.featured::before{content:'MOST POPULAR';position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--accent-red);color:#fff;padding:0.35rem 1.1rem;border-radius:0;font-family:var(--font-display);font-size:0.65rem;font-weight:700;letter-spacing:0.08em;}
-.pricing-card:hover{transform:translate(-3px,-3px);}
-.pricing-name{font-size:1.35rem;font-weight:700;margin-bottom:0.5rem;font-family:var(--font-display);text-transform:uppercase;}
-.pricing-desc{color:var(--text-muted);font-size:0.88rem;margin-bottom:2rem;}
-.pricing-price{font-family:var(--font-display);font-size:2.8rem;margin-bottom:0.5rem;font-weight:700;color:var(--text-primary);}
-.pricing-price span{font-size:0.95rem;color:var(--text-muted);font-family:var(--font-ui);font-weight:400;text-transform:none;}
-.pricing-features{list-style:none;margin:2rem 0;display:flex;flex-direction:column;gap:0.75rem;}
-.pricing-features li{display:flex;align-items:center;gap:0.75rem;font-size:0.9rem;color:var(--text-primary);}
-.pricing-features li::before{content:'✓';color:var(--accent-yellow);font-weight:700;}
-.pricing-btn{width:100%;padding:0.95rem;border-radius:0;border:2px solid var(--text-primary);background:transparent;color:var(--text-primary);font-weight:700;font-family:var(--font-display);text-transform:uppercase;cursor:pointer;transition:all .2s;}
-.pricing-btn:hover{background:var(--bg-surface-elevated);border-color:var(--accent-yellow);color:var(--accent-yellow);}
-.pricing-card.featured .pricing-btn{background:var(--accent-red);color:#fff;border-color:var(--text-primary);}
-.pricing-card.featured .pricing-btn:hover{background:var(--accent-yellow);color:var(--bg-dark);}
-.compare-table{max-width:1200px;margin:5rem auto 0;border:3px solid var(--text-primary);border-radius:0;overflow:hidden;background:var(--bg-dark);}
-.compare-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;align-items:center;padding:1.1rem 2rem;border-bottom:1px solid rgba(248,246,240,0.12);font-size:0.88rem;}
-.compare-row:last-child{border-bottom:none;}
-.compare-row.head{font-family:var(--font-ui);font-weight:900;font-size:0.7rem;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;background:var(--bg-surface);}
-.compare-row div:not(:first-child){text-align:center;color:var(--text-muted);}
-.compare-row .label{color:var(--text-primary);}
-.compare-row .yes{color:var(--accent-yellow);font-weight:700;}
-.compare-row .no{color:var(--text-muted);}
+    /* Portal CTA Button */
+    .btn-portal {
+      background: var(--text-primary);
+      color: var(--bg-dark);
+      border: 3px solid var(--text-primary);
+      padding: 1.2rem 2.5rem;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+      box-shadow: 6px 6px 0px var(--accent-red);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
+      text-decoration: none;
+      cursor: pointer;
+    }
 
-/* ---------------- FAQ ---------------- */
-.faq{padding:8rem 4rem;max-width:800px;margin:0 auto;}
-.faq-item{border-bottom:2px solid rgba(248,246,240,0.12);padding:1.8rem 0;}
-.faq-question{display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:1.05rem;font-weight:700;transition:color .2s;}
-.faq-question:hover{color:var(--accent-yellow);}
-.faq-question .icon{transition:transform .3s;color:var(--accent-red);font-family:var(--font-display);}
-.faq-item.active .faq-question .icon{transform:rotate(45deg);}
-.faq-answer{max-height:0;overflow:hidden;transition:max-height .4s ease-out,padding .4s;color:var(--text-muted);line-height:1.7;font-size:0.94rem;}
-.faq-item.active .faq-answer{max-height:300px;padding-top:1rem;}
+    .btn-portal:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 10px 10px 0px var(--accent-yellow);
+      background: var(--accent-yellow);
+      color: var(--bg-dark);
+    }
 
-/* ---------------- FINAL CTA ---------------- */
-.final-cta{padding:10rem 4rem;text-align:center;position:relative;overflow:hidden;background:#000;}
-.final-cta h2{font-size:clamp(2.8rem,7vw,6.5rem);margin-bottom:1.4rem;position:relative;z-index:2;}
-.final-cta p{color:var(--text-muted);font-size:1.1rem;max-width:500px;margin:0 auto 2.6rem;position:relative;z-index:2;}
-.final-cta .btn-primary{position:relative;z-index:2;font-size:1.1rem;padding:1.1rem 2.8rem;}
+    .cta-text-primary { line-height: 1; font-family: var(--font-display); }
+    .cta-text-secondary {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 700;
+      opacity: 0.85;
+      letter-spacing: 0.05em;
+    }
 
-/* ---------------- FOOTER ---------------- */
-footer{padding:6rem 4rem 3rem;border-top:2px solid rgba(248,246,240,0.12);display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4rem;max-width:1400px;margin:0 auto;}
-.footer-brand .logo{margin-bottom:1rem;}
-.footer-brand p{color:var(--text-muted);font-size:0.88rem;line-height:1.7;margin-bottom:1.6rem;}
-.footer-newsletter{display:flex;gap:0.5rem;max-width:340px;margin-bottom:1.6rem;}
-.footer-newsletter input{flex:1;background:var(--bg-surface);border:2px solid var(--text-primary);border-radius:0;padding:0.7rem 0.9rem;color:var(--text-primary);font-size:0.85rem;font-family:var(--font-ui);}
-.footer-newsletter input::placeholder{color:var(--text-muted);}
-.footer-newsletter button{background:var(--accent-red);color:#fff;border:2px solid var(--text-primary);border-radius:0;padding:0.7rem 1.1rem;font-weight:700;font-family:var(--font-display);text-transform:uppercase;font-size:0.85rem;cursor:pointer;box-shadow:3px 3px 0 var(--text-primary);transition:all .2s;}
-.footer-newsletter button:hover{background:var(--accent-yellow);color:var(--bg-dark);box-shadow:5px 5px 0 var(--accent-red);}
-.footer-social{display:flex;gap:0.8rem;}
-.footer-social a{width:34px;height:34px;border:2px solid rgba(248,246,240,0.15);border-radius:0;display:flex;align-items:center;justify-content:center;color:var(--text-muted);text-decoration:none;font-size:0.85rem;transition:color .2s,border-color .2s;}
-.footer-social a:hover{color:var(--accent-yellow);border-color:var(--accent-yellow);}
-.footer-links h4{font-size:0.85rem;font-weight:700;margin-bottom:1.4rem;color:var(--accent-yellow);font-family:var(--font-display);letter-spacing:0.05em;text-transform:uppercase;}
-.footer-links ul{list-style:none;display:flex;flex-direction:column;gap:0.7rem;}
-.footer-links a{color:var(--text-muted);text-decoration:none;font-size:0.88rem;transition:color .2s;}
-.footer-links a:hover{color:var(--accent-yellow);}
-.footer-bottom{grid-column:1/-1;text-align:center;padding-top:3rem;border-top:1px solid rgba(248,246,240,0.1);color:var(--text-muted);font-size:0.72rem;font-weight:800;font-family:var(--font-ui);}
+    .annotation {
+      font-family: var(--font-hand);
+      color: var(--accent-yellow);
+      font-size: 1.4rem;
+      transform: rotate(-5deg);
+    }
 
-#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;}
+    /* ---------------- NAVBAR ---------------- */
+    .navbar-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: var(--z-navbar);
+      padding: 1.5rem 0;
+      transition: all 0.3s ease;
+    }
+    .navbar-header.scrolled {
+      background: rgba(11, 12, 16, 0.94);
+      backdrop-filter: blur(16px);
+      border-bottom: 2px solid rgba(248, 246, 240, 0.12);
+      padding: 0.9rem 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+    .navbar-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .navbar-right-group {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+    .navbar-logo { text-decoration: none; }
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--text-primary);
+      transition: color 0.2s ease;
+    }
+    .logo-text:hover { color: var(--accent-yellow); }
+    .navbar-center { display: flex; align-items: center; gap: 2.2rem; }
+    .nav-link {
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      opacity: 0.75;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .nav-link:hover { opacity: 1; color: var(--accent-yellow); }
+    .nav-cta-btn {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      background: var(--accent-red);
+      color: var(--text-primary);
+      border: 2px solid var(--text-primary);
+      padding: 8px 18px;
+      box-shadow: 4px 4px 0px var(--text-primary);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .nav-cta-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px var(--accent-yellow);
+      background: var(--accent-yellow);
+      color: var(--bg-dark);
+    }
+    .nav-burger {
+      display: none;
+      width: 42px;
+      height: 42px;
+      border: 2px solid var(--text-primary);
+      background: var(--bg-surface);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .nav-burger span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--text-primary);
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-burger.open span:nth-child(2) { opacity: 0; }
+    .nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(80vw, 320px);
+      background: var(--bg-dark);
+      border-left: 3px solid var(--text-primary);
+      z-index: 1500;
+      padding: 6rem 2rem 2rem;
+      flex-direction: column;
+      gap: 0.4rem;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+    .nav-mobile-panel.open { transform: translateX(0); }
+    .nav-mobile-panel .nav-link {
+      opacity: 1;
+      font-size: 1.05rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid rgba(248, 246, 240, 0.12);
+    }
+    .nav-mobile-panel .nav-cta-btn {
+      margin-top: 1.5rem;
+      text-align: center;
+      display: block;
+    }
+    .nav-scrim {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1400;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .nav-scrim.open { opacity: 1; }
 
-@media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;scroll-behavior:auto !important;}
-}
-@media (max-width:1024px){
-  .hero-top{grid-template-columns:1fr;gap:3rem;}
-  .hero-content{text-align:center;}
-  .hero-subtitle{margin:0 auto 2.6rem;}
-  .hero-buttons{justify-content:center;}
-  .hero-portfolio{max-width:520px;margin:0 auto;width:100%;}
-  .community-grid,.ai-content{grid-template-columns:1fr;}
-  .community-visual{height:400px;}
-  footer{grid-template-columns:1fr 1fr;}
-  .stat-band-grid{grid-template-columns:1fr 1fr;gap:2.5rem;}
-  .stat-band-item:nth-child(3){border-left:none;}
-  .compare-row{grid-template-columns:1.4fr 1fr 1fr 1fr;padding:1rem;font-size:0.78rem;}
-}
-@media (max-width:768px){
-  nav{padding:1rem 1.5rem;}
-  .nav-links{display:none;}
-  .hero{padding:6.5rem 1.5rem 3rem;}
-  .features,.workflow,.community,.ai-director,.testimonials,.pricing,.faq,.final-cta,.stat-band,.tools-strip{padding:4rem 1.5rem;}
-  .workflow-step::after{display:none;}
-  .stat-row{gap:1.5rem;}
-  footer{grid-template-columns:1fr;gap:2rem;padding:3rem 1.5rem;}
-  .scrubber{padding:1.2rem 1.2rem 1rem;}
-  .chapter span{display:none;}
-  .stat-band-grid{grid-template-columns:1fr 1fr;gap:2rem;}
-  .stat-band-item{border-left:none;padding:0;}
-  .compare-table{overflow-x:auto;}
-  .compare-row{grid-template-columns:1.4fr 1fr 1fr 1fr;min-width:520px;}
-}
+    /* ---------------- HERO ---------------- */
+    .hero-section {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10rem 0 6rem 0;
+      overflow: hidden;
+    }
+    .hero-container {
+      position: relative;
+      z-index: var(--z-content);
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .hero-opening-question {
+      display: flex;
+      gap: 0.75rem;
+      font-family: var(--font-ui);
+      font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      color: var(--accent-red);
+      margin-bottom: 1rem;
+    }
+    .hero-opening-question .w1 { transform: rotate(-6deg); color: var(--accent-yellow); }
+    .hero-opening-question .w3 { color: var(--accent-blue); }
+    .hero-opening-question .w4 { transform: rotate(6deg); color: var(--text-primary); }
 
-.wl-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);z-index:3000;display:none;align-items:center;justify-content:center;padding:1.5rem;opacity:0;transition:opacity .25s ease;}
-.wl-overlay.open{display:flex;opacity:1;}
-.wl-modal{background:var(--bg-dark);border:4px solid var(--text-primary);border-radius:0;padding:2.4rem;max-width:440px;width:100%;position:relative;box-shadow:16px 16px 0 var(--accent-red);transform:translateY(16px) scale(0.98);transition:transform .3s cubic-bezier(.16,1,.3,1);}
-.wl-overlay.open .wl-modal{transform:translateY(0) scale(1);}
-.wl-close{position:absolute;top:1.1rem;right:1.1rem;width:32px;height:32px;border-radius:0;border:2px solid rgba(248,246,240,0.2);background:var(--bg-surface);color:var(--text-muted);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:border-color .2s,color .2s;}
-.wl-close:hover{border-color:var(--accent-red);color:var(--accent-red);}
-.wl-modal h3{font-family:var(--font-display);font-size:2.2rem;letter-spacing:0.01em;margin-bottom:0.5rem;color:var(--text-primary);text-transform:uppercase;}
-.wl-modal p.wl-sub{color:var(--text-muted);font-size:0.9rem;margin-bottom:1.6rem;font-weight:500;}
-.wl-field{margin-bottom:1rem;}
-.wl-field label{display:block;font-family:var(--font-ui);font-weight:900;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent-yellow);margin-bottom:0.4rem;}
-.wl-field input,.wl-field select{width:100%;background:var(--bg-surface);border:2px solid var(--text-primary);border-radius:0;padding:0.75rem 0.9rem;color:var(--text-primary);font-family:var(--font-ui);font-size:0.92rem;outline:none;transition:border-color .2s,box-shadow .2s;}
-.wl-field input:focus,.wl-field select:focus{border-color:var(--accent-yellow);box-shadow:4px 4px 0 var(--accent-yellow);}
-.wl-submit{width:100%;background:var(--text-primary);color:var(--bg-dark);border:3px solid var(--text-primary);padding:0.9rem;border-radius:0;font-weight:700;font-family:var(--font-display);text-transform:uppercase;font-size:0.92rem;cursor:pointer;margin-top:0.4rem;box-shadow:6px 6px 0 var(--accent-red);transition:all .2s;}
-.wl-submit:hover{background:var(--accent-yellow);box-shadow:8px 8px 0 var(--accent-yellow);transform:translate(-2px,-2px);}
-.wl-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-.wl-msg{font-family:var(--font-ui);font-weight:700;font-size:0.78rem;margin-top:0.9rem;min-height:1.1em;}
-.wl-msg.success{color:var(--green);}
-.wl-msg.error{color:var(--accent-red);}
-#footerFormMsg.success{color:var(--green);}
-#footerFormMsg.error{color:var(--accent-red);}
+    .hero-headline {
+      display: flex;
+      flex-direction: column;
+      font-size: clamp(3.8rem, 11vw, 14rem);
+      line-height: 0.88;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+    .massive-home-wrapper {
+      font-size: clamp(5.5rem, 16vw, 19rem);
+      color: var(--accent-red);
+      text-shadow: 6px 6px 0px var(--accent-yellow), -2px -2px 0px var(--bg-dark);
+    }
+    .hero-supporting-text {
+      font-family: var(--font-ui);
+      font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+      font-weight: 500;
+      border-left: 3px solid var(--accent-yellow);
+      padding-left: 1.25rem;
+      line-height: 1.4;
+    }
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .cta-portal-wrapper { position: relative; }
+    .hero-arrow-note {
+      position: absolute;
+      top: -45px;
+      right: -60px;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      pointer-events: none;
+    }
+    .hero-secondary-challenge-link {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      text-decoration: none;
+      transition: transform 0.2s ease;
+    }
+    .hero-secondary-challenge-link:hover { transform: translateX(6px); }
+    .challenge-pulse-tag {
+      font-size: 0.65rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: var(--accent-yellow);
+    }
+    .challenge-link-text {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 2px;
+    }
 
-.admin-modal{max-width:400px;box-shadow:16px 16px 0 var(--accent-yellow);}
-.admin-table-modal{max-width:920px;width:94%;max-height:82vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:16px 16px 0 var(--accent-yellow);}
-.admin-table-wrap{overflow:auto;border:2px solid rgba(248,246,240,0.15);border-radius:0;margin-top:1rem;}
-.admin-table{width:100%;border-collapse:collapse;font-size:0.82rem;}
-.admin-table th{position:sticky;top:0;background:var(--bg-surface);text-align:left;padding:0.65rem 0.8rem;font-family:var(--font-ui);font-weight:900;font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid rgba(248,246,240,0.15);}
-.admin-table td{padding:0.6rem 0.8rem;border-bottom:1px solid rgba(248,246,240,0.1);color:var(--text-primary);vertical-align:top;}
-.admin-table tr:last-child td{border-bottom:none;}
-.admin-table tr:hover td{background:var(--bg-surface-elevated);}
-.admin-toolbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-top:0.3rem;flex-wrap:wrap;}
-.admin-count{font-family:var(--font-ui);font-weight:700;font-size:0.78rem;color:var(--text-muted);}
-.admin-refresh{background:var(--bg-surface);border:2px solid var(--text-primary);color:var(--text-primary);padding:0.5rem 1rem;border-radius:0;font-family:var(--font-display);text-transform:uppercase;font-size:0.8rem;cursor:pointer;transition:border-color .2s,color .2s;}
-.admin-refresh:hover{border-color:var(--accent-yellow);color:var(--accent-yellow);}
-.admin-empty{padding:2rem;text-align:center;color:var(--text-muted);font-size:0.85rem;}
-</style>
+    /* ---------------- ABOUT EDITORSPACE ---------------- */
+    .about-section {
+      background-color: var(--bg-surface);
+      padding: 10vw 0;
+    }
+    .about-story-body { display: flex; flex-direction: column; gap: 4.5rem; }
+    .scattered-narrative-card {
+      background: var(--bg-dark);
+      border: 4px solid var(--text-primary);
+      box-shadow: 14px 14px 0px var(--accent-red);
+      padding: 3.5rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+    .lead-paragraph {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      color: var(--accent-yellow);
+      line-height: 1.1;
+    }
+    .scatter-points-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .scatter-point {
+      background: var(--bg-surface);
+      border: 2px solid rgba(248, 246, 240, 0.2);
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .scatter-point.highlight {
+      border-color: var(--accent-red);
+      background: rgba(255, 42, 75, 0.06);
+    }
+    .sc-label {
+      font-family: var(--font-ui);
+      font-size: 0.68rem;
+      font-weight: 900;
+      color: var(--accent-red);
+      letter-spacing: 0.1em;
+    }
+    .why-building-callout {
+      border-top: 2px solid rgba(248, 246, 240, 0.15);
+      padding-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .callout-statement {
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-family: var(--font-display);
+      color: var(--text-primary);
+    }
+    .callout-sub {
+      font-family: var(--font-ui);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--accent-yellow);
+    }
+    .belong-core-banner {
+      background: var(--bg-dark);
+      border: 4px solid var(--text-primary);
+      box-shadow: 16px 16px 0px var(--accent-yellow);
+      padding: 4rem 3rem;
+      text-align: center;
+    }
+    .belong-line-1 {
+      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+    .belong-line-2 {
+      font-size: clamp(2.4rem, 5.5vw, 5rem);
+      color: var(--accent-yellow);
+      text-shadow: 3px 3px 0px var(--accent-red);
+    }
+
+    /* ---------------- WHY EDITORSPACE ---------------- */
+    .why-section {
+      background-color: var(--bg-dark);
+      padding: 10vw 0;
+    }
+    .tools-vs-space-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 3rem;
+      margin-bottom: 5rem;
+    }
+    .tools-list-card, .different-question-card {
+      background: var(--bg-surface);
+      border: 4px solid var(--text-primary);
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .tools-list-card { box-shadow: 14px 14px 0px var(--accent-red); }
+    .different-question-card { box-shadow: 14px 14px 0px var(--accent-yellow); }
+    .tool-mapping-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      background: rgba(248, 246, 240, 0.03);
+      padding: 8px 14px;
+      border-left: 2px solid var(--accent-red);
+    }
+    .core-question-callout {
+      background: var(--bg-dark);
+      border: 3px solid var(--accent-yellow);
+      padding: 1.8rem;
+      box-shadow: 6px 6px 0px var(--accent-red);
+    }
+    .core-question-callout p {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.8vw, 2.4rem);
+      color: var(--accent-yellow);
+      line-height: 1.05;
+    }
+    .philosophy-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-bottom: 5rem;
+    }
+    .philosophy-item-card {
+      background: var(--bg-surface);
+      border: 3px solid var(--text-primary);
+      padding: 2.2rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .philosophy-item-card h4 {
+      font-size: 1.4rem;
+      color: var(--accent-yellow);
+    }
+
+    /* ---------------- WHAT YOU CAN DO ---------------- */
+    .what-section {
+      background-color: var(--bg-surface);
+      padding: 10vw 0;
+    }
+    .use-cases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 4.5rem;
+    }
+    .use-case-card {
+      background: var(--bg-dark);
+      border: 3px solid var(--text-primary);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .uc-bullets-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .uc-bullets-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    /* ---------------- CREATIVE JOURNEY ---------------- */
+    .journey-section {
+      background-color: var(--bg-dark);
+      padding: 10vw 0;
+    }
+    .filmstrip-container {
+      background: #000;
+      border: 4px solid var(--text-primary);
+      box-shadow: 14px 14px 0px var(--accent-red);
+      padding: 1.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .film-sprocket-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      overflow: hidden;
+    }
+    .sprocket-hole {
+      width: 18px;
+      height: 14px;
+      background: var(--text-primary);
+      border-radius: 2px;
+      margin-right: 28px;
+      flex-shrink: 0;
+    }
+    .film-panels-track {
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+      padding: 1rem 2rem;
+    }
+    .film-panel-card {
+      flex: 0 0 300px;
+      background: var(--bg-surface);
+      border: 3px solid var(--text-primary);
+      padding: 2rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .panel-statement { font-family: var(--font-display); font-size: 1.8rem; }
+    .panel-headline-desc { font-weight: 700; color: var(--text-primary); }
+    .panel-detail { font-size: 0.88rem; color: var(--text-muted); }
+
+    /* ---------------- CHALLENGE ---------------- */
+    .challenge-section {
+      background-color: var(--bg-dark);
+      padding: 10vw 0;
+    }
+    .challenge-main-stage {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 3.5rem;
+      margin-bottom: 5rem;
+    }
+    .collectible-challenge-poster {
+      background: var(--text-primary);
+      color: var(--bg-dark);
+      border: 4px solid var(--bg-dark);
+      box-shadow: 16px 16px 0px var(--accent-red);
+      padding: 2.8rem 2.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      transform: rotate(-2deg);
+    }
+    .challenge-brief-console {
+      background: var(--bg-surface);
+      border: 3px solid var(--text-primary);
+      box-shadow: 12px 12px 0px var(--accent-blue);
+    }
+    .console-tab-header {
+      display: flex;
+      border-bottom: 3px solid var(--text-primary);
+    }
+    .c-tab {
+      flex: 1;
+      background: transparent;
+      color: var(--text-primary);
+      border: none;
+      border-right: 2px solid var(--text-primary);
+      padding: 14px 10px;
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 900;
+      cursor: pointer;
+      text-align: center;
+    }
+    .c-tab:last-child { border-right: none; }
+    .c-tab.active { background: var(--accent-yellow); color: var(--bg-dark); }
+    .console-panel-content { padding: 2.5rem; }
+    .tab-pane { display: none; flex-direction: column; gap: 1.5rem; }
+    .tab-pane.active { display: flex; }
+
+    .prizes-highlight-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+    .prize-highlight-card {
+      background: var(--bg-surface);
+      border: 3px solid var(--text-primary);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .prize-highlight-card.p1 { border-color: var(--accent-yellow); box-shadow: 10px 10px 0px var(--accent-yellow); }
+    .prize-highlight-card.p2 { border-color: var(--accent-blue); box-shadow: 10px 10px 0px var(--accent-blue); }
+    .prize-highlight-card.p3 { border-color: var(--accent-red); box-shadow: 10px 10px 0px var(--accent-red); }
+
+    .why-compete-section-block {
+      background: var(--bg-surface);
+      border: 4px solid var(--text-primary);
+      box-shadow: 16px 16px 0px var(--accent-red);
+      padding: 4rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      margin-top: 5rem;
+    }
+    .why-compete-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .why-compete-card {
+      background: var(--bg-dark);
+      border: 2px solid var(--text-primary);
+      padding: 1.8rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .why-compete-card.highlight-win {
+      border-color: var(--accent-yellow);
+      box-shadow: 6px 6px 0px var(--accent-yellow);
+    }
+
+    /* ---------------- WHO IS THIS FOR ---------------- */
+    .who-section {
+      background-color: var(--bg-dark);
+      padding: 10vw 0;
+    }
+    .roles-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 5rem;
+    }
+    .role-focus-card {
+      background: var(--bg-surface);
+      border: 3px solid var(--text-primary);
+      padding: 2.2rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .role-focus-card.full-span { grid-column: 1 / -1; background: #181b24; }
+
+    /* ---------------- WAITLIST SECTION ---------------- */
+    .waitlist-section {
+      background-color: var(--bg-surface);
+      padding: 10vw 0;
+      display: flex;
+      align-items: center;
+    }
+    .waitlist-form-block {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--bg-dark);
+      border: 4px solid var(--text-primary);
+      box-shadow: 16px 16px 0px var(--accent-red);
+      padding: 3.5rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+    .form-inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.8rem;
+    }
+    .form-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .form-field-group label {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 900;
+      color: var(--accent-yellow);
+      letter-spacing: 0.1em;
+    }
+    .form-field-group input, .form-field-group select {
+      background: var(--bg-surface);
+      border: 2px solid var(--text-primary);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      padding: 12px 14px;
+      outline: none;
+    }
+    .form-field-group input:focus, .form-field-group select:focus {
+      border-color: var(--accent-yellow);
+      box-shadow: 4px 4px 0px var(--accent-yellow);
+    }
+    .custom-error-box {
+      background: rgba(255, 42, 75, 0.15);
+      border: 2px solid var(--accent-red);
+      padding: 1.2rem;
+      display: none;
+    }
+    .custom-error-box.show { display: block; }
+    
+    /* SUCCESS CARD */
+    .waitlist-success-card {
+      display: none;
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--bg-dark);
+      border: 4px solid var(--text-primary);
+      box-shadow: 18px 18px 0px var(--accent-yellow);
+      padding: 4rem 3rem;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 2rem;
+    }
+    .waitlist-success-card.show { display: flex; }
+    .creator-id-reveal-box {
+      background: rgba(245, 230, 37, 0.08);
+      border: 3px solid var(--accent-yellow);
+      padding: 1.5rem 2.5rem;
+      width: 100%;
+    }
+    .id-number {
+      font-family: var(--font-display);
+      font-size: 3.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* ---------------- FOOTER ---------------- */
+    .footer-section {
+      border-top: 2px solid rgba(248, 246, 240, 0.15);
+      padding: 6rem 0 3rem 0;
+      background-color: var(--bg-dark);
+    }
+    .footer-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 3rem;
+    }
+    .footer-nav-links { display: flex; flex-direction: column; gap: 0.8rem; }
+    .footer-nav-links a {
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+    }
+    .footer-nav-links a:hover { color: var(--accent-yellow); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ---------------- TABLET ---------------- */
+    @media (max-width: 900px) {
+      .tools-vs-space-grid, .challenge-main-stage, .form-inputs-grid { grid-template-columns: 1fr; }
+      .navbar-center { display: none; }
+      .nav-burger { display: flex; }
+      .nav-mobile-panel { display: flex; }
+      .nav-scrim { display: block; }
+      .hero-cta-group { gap: 1.75rem; }
+      .hero-arrow-note { position: static; margin-bottom: 0.5rem; transform: none; }
+      .cta-portal-wrapper { display: flex; flex-direction: column; }
+    }
+
+    /* ---------------- PHONES ---------------- */
+    @media (max-width: 640px) {
+      .container { padding: 0 6vw; }
+      .nav-cta-btn { display: none; }
+      .navbar-header, .navbar-header.scrolled { padding: 1rem 0; }
+
+      .hero-section { padding: 7.5rem 0 4rem 0; }
+      .hero-container { gap: 1.5rem; }
+      .hero-headline { font-size: clamp(2.6rem, 12vw, 4rem); }
+      .massive-home-wrapper { font-size: clamp(3.4rem, 16vw, 5.5rem); text-shadow: 4px 4px 0px var(--accent-yellow), -1px -1px 0px var(--bg-dark); }
+      .hero-opening-question { flex-wrap: wrap; row-gap: 0.4rem; }
+      .btn-portal { padding: 1rem 1.6rem; font-size: 1.1rem; width: 100%; box-shadow: 4px 4px 0px var(--accent-red); }
+      .btn-portal:hover { box-shadow: 6px 6px 0px var(--accent-yellow); }
+      .cta-portal-wrapper { width: 100%; }
+
+      .about-section, .why-section, .what-section, .journey-section, .challenge-section, .who-section, .waitlist-section {
+        padding: 16vw 0;
+      }
+      .section-main-title { font-size: clamp(2.2rem, 10vw, 3.6rem); }
+
+      .scattered-narrative-card, .belong-core-banner, .why-compete-section-block, .waitlist-form-block, .waitlist-success-card {
+        padding: 2rem 1.4rem;
+        box-shadow: 7px 7px 0px var(--accent-red);
+      }
+      .belong-core-banner { box-shadow: 7px 7px 0px var(--accent-yellow); }
+      .why-compete-section-block { box-shadow: 7px 7px 0px var(--accent-red); }
+      .waitlist-form-block { box-shadow: 7px 7px 0px var(--accent-red); }
+      .waitlist-success-card { box-shadow: 8px 8px 0px var(--accent-yellow); }
+      .belong-line-2 { font-size: clamp(1.9rem, 9vw, 3rem); }
+
+      .tools-list-card, .different-question-card { padding: 1.8rem 1.4rem; box-shadow: 7px 7px 0px var(--accent-red); }
+      .different-question-card { box-shadow: 7px 7px 0px var(--accent-yellow); }
+      .core-question-callout { padding: 1.2rem; box-shadow: 4px 4px 0px var(--accent-red); }
+      .core-question-callout p { font-size: clamp(1.2rem, 6vw, 1.7rem); }
+
+      .philosophy-cards-grid, .use-cases-grid, .prizes-highlight-strip, .why-compete-grid, .roles-cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .use-case-card, .prize-highlight-card, .role-focus-card, .philosophy-item-card { padding: 1.8rem 1.4rem; }
+      .role-focus-card.full-span { padding: 2.5rem 1.4rem !important; }
+
+      .collectible-challenge-poster {
+        padding: 1.8rem 1.4rem;
+        box-shadow: 8px 8px 0px var(--accent-red);
+        transform: rotate(0deg);
+      }
+      .collectible-challenge-poster h3 { font-size: clamp(1.8rem, 8vw, 2.4rem); }
+      .challenge-brief-console { box-shadow: 7px 7px 0px var(--accent-blue); }
+      .console-tab-header { flex-wrap: wrap; }
+      .c-tab { flex: 1 1 33%; font-size: 0.65rem; padding: 12px 6px; }
+      .console-panel-content { padding: 1.6rem 1.4rem; }
+
+      .id-number { font-size: clamp(2rem, 10vw, 3.4rem); }
+      .creator-id-reveal-box { padding: 1.2rem 1.4rem; }
+
+      .footer-top-row { gap: 2rem; }
+      .footer-nav-links { order: 3; }
+
+      .filmstrip-container { padding: 1.2rem 0; }
+      .film-panel-card { flex: 0 0 78vw; }
+    }
+
+    /* ---------------- ADMIN MODALS ---------------- */
+    .admin-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 3000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .admin-overlay.open { display: flex; opacity: 1; }
+    .admin-modal {
+      background: var(--bg-dark);
+      border: 4px solid var(--text-primary);
+      padding: 2.4rem;
+      max-width: 440px;
+      width: 100%;
+      position: relative;
+      box-shadow: 16px 16px 0px var(--accent-red);
+      transform: translateY(16px) scale(0.98);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .admin-overlay.open .admin-modal { transform: translateY(0) scale(1); }
+    .admin-table-modal { max-width: 920px; width: 94%; max-height: 82vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 16px 16px 0px var(--accent-yellow); }
+    .admin-modal-close {
+      position: absolute;
+      top: 1.1rem;
+      right: 1.1rem;
+      width: 34px;
+      height: 34px;
+      border: 2px solid rgba(248, 246, 240, 0.2);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .admin-modal-close:hover { border-color: var(--accent-red); color: var(--accent-red); }
+    .admin-modal h3 { font-size: 2rem; margin-bottom: 0.5rem; }
+    .admin-modal p.admin-sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.6rem; font-family: var(--font-ui); text-transform: none; font-weight: 500; }
+    .admin-field { margin-bottom: 1.4rem; }
+    .admin-field label {
+      display: block;
+      font-family: var(--font-ui);
+      font-weight: 900;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--accent-yellow);
+      margin-bottom: 0.5rem;
+    }
+    .admin-field input {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 2px solid var(--text-primary);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      padding: 12px 14px;
+      outline: none;
+    }
+    .admin-field input:focus { border-color: var(--accent-yellow); box-shadow: 4px 4px 0px var(--accent-yellow); }
+    .admin-msg { font-family: var(--font-ui); font-weight: 700; font-size: 0.78rem; margin-top: 1rem; min-height: 1.1em; }
+    .admin-msg.success { color: #34D399; }
+    .admin-msg.error { color: var(--accent-red); }
+    .admin-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 0.3rem; flex-wrap: wrap; }
+    .admin-count { font-family: var(--font-ui); font-weight: 700; font-size: 0.78rem; color: var(--text-muted); }
+    .admin-refresh-btn {
+      background: var(--bg-surface);
+      border: 2px solid var(--text-primary);
+      color: var(--text-primary);
+      padding: 0.5rem 1rem;
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .admin-refresh-btn:hover { border-color: var(--accent-yellow); color: var(--accent-yellow); }
+    .admin-table-wrap { overflow: auto; border: 2px solid rgba(248, 246, 240, 0.15); margin-top: 1rem; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .admin-table th {
+      position: sticky;
+      top: 0;
+      background: var(--bg-surface);
+      text-align: left;
+      padding: 0.65rem 0.8rem;
+      font-family: var(--font-ui);
+      font-weight: 900;
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 2px solid rgba(248, 246, 240, 0.15);
+    }
+    .admin-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid rgba(248, 246, 240, 0.1); color: var(--text-primary); vertical-align: top; }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tr:hover td { background: var(--bg-surface-elevated); }
+    .admin-empty { padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+
+    @media (max-width: 640px) {
+      .admin-modal { padding: 1.8rem 1.4rem; }
+      .admin-modal h3 { font-size: 1.6rem; }
+    }
+
+    @media (max-width: 380px) {
+      .hero-headline { font-size: clamp(2.2rem, 13vw, 3.2rem); }
+      .massive-home-wrapper { font-size: clamp(2.8rem, 17vw, 4.4rem); }
+      .section-main-title { font-size: clamp(1.9rem, 11vw, 2.8rem); }
+      .c-tab { font-size: 0.58rem; padding: 10px 4px; }
+    }
+  </style>
 </head>
 <body>
-<div id="scroll-progress"></div>
-<canvas id="particles"></canvas>
-<div class="halftone-bg"></div>
 
-<nav>
-  <a href="#" class="logo">Editors<span>Space</span></a>
-  <ul class="nav-links">
-    <li><a href="#features">Features</a></li>
-    <li><a href="#workflow">Workflow</a></li>
-    <li><a href="#community">Community</a></li>
-    <li><a href="#pricing">Pricing</a></li>
-    <li><a href="#faq">FAQ</a></li>
-  </ul>
-  <div class="nav-right">
-    <button class="nav-cta magnetic js-open-waitlist">Join Waitlist</button>
-  </div>
-</nav>
+  <div class="texture-overlay"></div>
+  <div class="halftone-bg"></div>
+  <canvas id="particles"></canvas>
 
-<section class="hero">
-  <div class="hero-top">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <div class="dot"></div>
-        <span class="font-mono" style="font-size:0.7rem;letter-spacing:0.12em;">EARLY ACCESS NOW OPEN</span>
+  <!-- NAVIGATION -->
+  <header class="navbar-header" id="navbar">
+    <div class="container navbar-container">
+      <a href="#" class="navbar-logo"><span class="logo-text">EDITORSPACE</span></a>
+      <nav class="navbar-center">
+        <a href="#about" class="nav-link">ABOUT</a>
+        <a href="#why" class="nav-link">WHY EDITORSPACE</a>
+        <a href="#challenge" class="nav-link">CHALLENGE</a>
+        <a href="https://instagram.com/editorspace.create" target="_blank" rel="noopener noreferrer" class="nav-link">INSTAGRAM</a>
+      </nav>
+      <div class="navbar-right-group">
+        <a href="#waitlist" class="nav-cta-btn">JOIN WAITLIST →</a>
+        <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
       </div>
-      <h1 class="font-hero">
-        <span class="line" style="font-size:clamp(4rem,8vw,8rem);line-height:0.9;display:block;">EDITORSPACE</span>
-        <span style="font-size:clamp(1.5rem,3vw,3rem);line-height:1.1;display:block;margin-top:0.5rem;">Build your creative space...</span>
+    </div>
+  </header>
+
+  <div class="nav-scrim" id="navScrim"></div>
+  <nav class="nav-mobile-panel" id="navMobilePanel">
+    <a href="#about" class="nav-link">ABOUT</a>
+    <a href="#why" class="nav-link">WHY EDITORSPACE</a>
+    <a href="#challenge" class="nav-link">CHALLENGE</a>
+    <a href="https://instagram.com/editorspace.create" target="_blank" rel="noopener noreferrer" class="nav-link">INSTAGRAM</a>
+    <a href="#waitlist" class="nav-cta-btn">JOIN WAITLIST →</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero-section">
+    <div class="container hero-container">
+      <div class="hero-opening-question hero-load-1">
+        <span class="w1">WHERE</span>
+        <span class="w2">DO</span>
+        <span class="w3">CREATIVES</span>
+        <span class="w4">BELONG?</span>
+      </div>
+
+      <h1 class="hero-headline hero-load-2">
+        <span>YOUR CREATIVE</span>
+        <span>WORLD</span>
+        <span>DESERVES</span>
+        <span class="massive-home-wrapper">A HOME.</span>
       </h1>
-      <p class="hero-subtitle">One space for every frame, every cut, and every creative decision.</p>
-      <div class="hero-buttons">
-        <button class="btn-primary magnetic js-open-waitlist">Join Waitlist</button>
-        <button class="btn-secondary magnetic"><span>▶</span> Watch Demo</button>
+
+      <p class="hero-supporting-text hero-load-3">
+        A space for the people who make things.
+      </p>
+
+      <div class="hero-cta-group hero-load-4">
+        <div class="cta-portal-wrapper">
+          <div class="annotation hero-arrow-note">Enter early ✦ ➔</div>
+          <a href="#waitlist" class="btn-portal">
+            <span class="cta-text-primary">JOIN THE WAITLIST →</span>
+            <span class="cta-text-secondary">BE AMONG THE FIRST CREATORS INSIDE</span>
+          </a>
+        </div>
+        <a href="#challenge" class="hero-secondary-challenge-link">
+          <span class="challenge-pulse-tag">COMING SOON</span>
+          <span class="challenge-link-text">THE FIRST CREATIVE CHALLENGE IS COMING →</span>
+        </a>
       </div>
     </div>
+  </section>
 
-    <div class="hero-portfolio animate-scale visible">
-      <div class="hp-profile">
-        <div class="hp-avatar">JR</div>
-        <div class="hp-profile-info">
-          <h4>Jordan Reyes <span class="hp-verified">✓</span></h4>
-          <div class="role">Senior Editor · Post Collective</div>
+  <!-- ABOUT EDITORSPACE -->
+  <section class="about-section" id="about">
+    <div class="container">
+      <div class="about-header-block reveal">
+        <span class="section-chapter-tag">ABOUT EDITORSPACE</span>
+        <h2 class="section-main-title">THE CREATIVE WORLD<br>IS SCATTERED.</h2>
+      </div>
+
+      <div class="about-story-body">
+        <div class="scattered-narrative-card reveal">
+          <p class="lead-paragraph">A creator can spend years building incredible work...</p>
+          <div class="scatter-points-grid reveal-group">
+            <div class="scatter-point"><span class="sc-label">01 // WORK</span><p>Their work lives in one place.</p></div>
+            <div class="scatter-point"><span class="sc-label">02 // CONVERSATIONS</span><p>Their conversations somewhere else.</p></div>
+            <div class="scatter-point"><span class="sc-label">03 // PROJECTS</span><p>Their projects somewhere else.</p></div>
+            <div class="scatter-point"><span class="sc-label">04 // OPPORTUNITIES</span><p>Their opportunities somewhere else.</p></div>
+            <div class="scatter-point"><span class="sc-label">05 // COMMUNITY</span><p>Their community somewhere else.</p></div>
+            <div class="scatter-point highlight"><span class="sc-label">06 // REPUTATION</span><p>Their reputation is spread across all of it.</p></div>
+          </div>
+          <div class="why-building-callout">
+            <p class="callout-statement">We believe there should be a space built around the person creating the work.</p>
+            <p class="callout-sub">That is why we're building EditorSpace.</p>
+          </div>
         </div>
-        <span class="hp-status-pill">Available</span>
+
+        <div class="belong-core-banner reveal">
+          <h3 class="belong-line-1">WE'RE NOT TRYING TO BUILD ANOTHER PLACE TO POST.</h3>
+          <h2 class="belong-line-2">WE'RE BUILDING A PLACE TO BELONG.</h2>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY EDITORSPACE -->
+  <section class="why-section" id="why">
+    <div class="container">
+      <span class="section-chapter-tag reveal">WHY EDITORSPACE?</span>
+      <h2 class="section-main-title reveal">CREATIVES DIDN'T GET A SPACE.<br>THEY GOT TOOLS.</h2>
+
+      <div class="tools-vs-space-grid reveal-group">
+        <div class="tools-list-card">
+          <span style="color: var(--accent-red); font-size: 0.75rem; font-weight: 900;">THE SCATTERED REALITY</span>
+          <div class="tool-mapping-row"><strong style="font-family: var(--font-display); font-size: 1.1rem;">INSTAGRAM</strong> <span>for attention.</span></div>
+          <div class="tool-mapping-row"><strong style="font-family: var(--font-display); font-size: 1.1rem;">BEHANCE</strong> <span>for portfolios.</span></div>
+          <div class="tool-mapping-row"><strong style="font-family: var(--font-display); font-size: 1.1rem;">LINKEDIN</strong> <span>for professional identity.</span></div>
+          <div class="tool-mapping-row"><strong style="font-family: var(--font-display); font-size: 1.1rem;">WHATSAPP</strong> <span>for conversations.</span></div>
+          <div class="tool-mapping-row"><strong style="font-family: var(--font-display); font-size: 1.1rem;">EMAIL</strong> <span>for clients.</span></div>
+          <div class="tool-mapping-row"><strong style="font-family: var(--font-display); font-size: 1.1rem;">CLOUD DRIVES</strong> <span>for files.</span></div>
+          <h3 style="font-size: 1.4rem; color: var(--accent-yellow); margin-top: 1rem;">AND SOMEHOW... YOU HAVE TO CONNECT EVERYTHING.</h3>
+        </div>
+
+        <div class="different-question-card">
+          <span style="color: var(--accent-yellow); font-size: 0.75rem; font-weight: 900;">THE NEW PARADIGM</span>
+          <h3 style="font-size: 2rem;">EDITORSPACE STARTS FROM A DIFFERENT QUESTION.</h3>
+          <div class="core-question-callout">
+            <p>WHAT IF THE SPACE STARTED WITH THE CREATOR?</p>
+          </div>
+          <p style="color: var(--text-muted);">A single environment where your work, peers, collaborations, and opportunities live together.</p>
+        </div>
       </div>
 
-      <div class="hp-stats">
-        <div class="hp-stat"><div class="num">128</div><div class="lbl">Projects</div></div>
-        <div class="hp-stat"><div class="num">4.9</div><div class="lbl">Rating</div></div>
-        <div class="hp-stat"><div class="num">2.3k</div><div class="lbl">Followers</div></div>
+      <!-- 6 PHILOSOPHY ITEMS -->
+      <div class="philosophy-cards-grid reveal-group">
+        <div class="philosophy-item-card">
+          <span style="color: var(--accent-red); font-weight: 900; font-size: 0.75rem;">01</span>
+          <h4>YOUR PROFILE IS NOT JUST A PROFILE.</h4>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">It represents your creative identity and aesthetic signature.</p>
+        </div>
+        <div class="philosophy-item-card">
+          <span style="color: var(--accent-red); font-weight: 900; font-size: 0.75rem;">02</span>
+          <h4>YOUR WORK IS NOT JUST ANOTHER POST.</h4>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">It becomes an enduring part of your permanent body of work.</p>
+        </div>
+        <div class="philosophy-item-card">
+          <span style="color: var(--accent-red); font-weight: 900; font-size: 0.75rem;">03</span>
+          <h4>A MESSAGE IS NOT JUST ANOTHER CHAT.</h4>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">It can become the organic beginning of a serious project.</p>
+        </div>
+        <div class="philosophy-item-card">
+          <span style="color: var(--accent-red); font-weight: 900; font-size: 0.75rem;">04</span>
+          <h4>A COLLABORATION IS NOT JUST A CONVERSATION.</h4>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">It can become something original you build and publish together.</p>
+        </div>
+        <div class="philosophy-item-card">
+          <span style="color: var(--accent-red); font-weight: 900; font-size: 0.75rem;">05</span>
+          <h4>A COMPETITION IS NOT JUST A PRIZE.</h4>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">It is a chance to test your craft, get seen, and discover other creators.</p>
+        </div>
+        <div class="philosophy-item-card">
+          <span style="color: var(--accent-red); font-weight: 900; font-size: 0.75rem;">06</span>
+          <h4>A COMPLETED PROJECT DOES NOT DISAPPEAR.</h4>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">It compounds and becomes part of your lasting creative reputation.</p>
+        </div>
       </div>
+    </div>
+  </section>
 
-      <div class="hero-portfolio-head">
-        <span class="hp-title">Recent Cuts</span>
-        <span class="hp-count">04 / 128</span>
+  <!-- WHAT YOU CAN DO -->
+  <section class="what-section">
+    <div class="container">
+      <span class="section-chapter-tag reveal">CAPABILITIES</span>
+      <h2 class="section-main-title reveal">SO WHAT ACTUALLY<br>HAPPENS HERE?</h2>
+
+      <div class="use-cases-grid reveal-group">
+        <div class="use-case-card" style="border-color: var(--accent-red); box-shadow: 10px 10px 0px var(--accent-red);">
+          <h3 style="font-size: 2rem;">01. DISCOVER</h3>
+          <ul class="uc-bullets-list">
+            <li>— Find creators across editing, 3D, and VFX.</li>
+            <li>— See uncompressed craft and stems.</li>
+            <li>— Follow people whose style you admire.</li>
+          </ul>
+        </div>
+        <div class="use-case-card" style="border-color: var(--accent-yellow); box-shadow: 10px 10px 0px var(--accent-yellow);">
+          <h3 style="font-size: 2rem;">02. BUILD YOUR SPACE</h3>
+          <ul class="uc-bullets-list">
+            <li>— Create a living portfolio with full project context.</li>
+            <li>— Show your timeline passes and color grades.</li>
+            <li>— Let peers understand your creative thinking.</li>
+          </ul>
+        </div>
+        <div class="use-case-card" style="border-color: var(--accent-blue); box-shadow: 10px 10px 0px var(--accent-blue);">
+          <h3 style="font-size: 2rem;">03. FIND WORK</h3>
+          <ul class="uc-bullets-list">
+            <li>— Discover high-caliber creative opportunities.</li>
+            <li>— Zero race-to-the-bottom pricing.</li>
+            <li>— Connect with directors and studios looking for authentic craft.</li>
+          </ul>
+        </div>
+        <div class="use-case-card" style="border-color: var(--accent-violet); box-shadow: 10px 10px 0px var(--accent-violet);">
+          <h3 style="font-size: 2rem;">04. MESSAGE</h3>
+          <ul class="uc-bullets-list">
+            <li>— Talk directly with fellow creators.</li>
+            <li>— Discuss project files and workflows.</li>
+            <li>— Turn conversations into structured collaborations.</li>
+          </ul>
+        </div>
+        <div class="use-case-card" style="border-color: var(--accent-yellow); box-shadow: 10px 10px 0px var(--accent-yellow);">
+          <h3 style="font-size: 2rem;">05. COLLABORATE</h3>
+          <ul class="uc-bullets-list">
+            <li>— Bring multi-disciplinary creators together.</li>
+            <li>— Share timelines, graphics, and audio stems.</li>
+            <li>— Frame-accurate feedback and rapid iteration.</li>
+          </ul>
+        </div>
+        <div class="use-case-card" style="border-color: var(--accent-red); box-shadow: 10px 10px 0px var(--accent-red);">
+          <h3 style="font-size: 2rem;">06. BUILD REPUTATION</h3>
+          <ul class="uc-bullets-list">
+            <li>— Every completed cut becomes part of your creative history.</li>
+            <li>— Showcase verified collaborations.</li>
+            <li>— Build enduring authority around what you actually make.</li>
+          </ul>
+        </div>
       </div>
-      <div class="reel-list">
-        <div class="reel-item">
-          <div class="reel-thumb">🎬</div>
-          <div class="reel-info">
-            <h4>Midnight Runners</h4>
-            <div class="reel-meta">
-              <span class="reel-tag">Narrative</span>
-              <div class="reel-progress"><span style="width:100%;"></span></div>
+    </div>
+  </section>
+
+  <!-- CREATIVE JOURNEY -->
+  <section class="journey-section">
+    <div class="container">
+      <span class="section-chapter-tag reveal">THE TIMELINE</span>
+      <h2 class="section-main-title reveal">YOUR WORK CAN LEAD SOMEWHERE.</h2>
+
+      <div class="filmstrip-container reveal-scale">
+        <div class="film-sprocket-row">
+          <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+        </div>
+
+        <div class="film-panels-track reveal-group">
+          <div class="film-panel-card" style="border-color: var(--accent-red);">
+            <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-red);">STAGE 01</span>
+            <h3 class="panel-statement" style="color: var(--accent-red);">CREATE</h3>
+            <p class="panel-headline-desc">You make something you're proud of.</p>
+            <p class="panel-detail">A raw cut or motion test that embodies your signature style.</p>
+          </div>
+          <div class="film-panel-card" style="border-color: var(--accent-yellow);">
+            <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-yellow);">STAGE 02</span>
+            <h3 class="panel-statement" style="color: var(--accent-yellow);">DISCOVER</h3>
+            <p class="panel-headline-desc">Someone finds your work.</p>
+            <p class="panel-detail">Seen by discerning eyes who recognize pacing and craft.</p>
+          </div>
+          <div class="film-panel-card" style="border-color: var(--accent-blue);">
+            <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-blue);">STAGE 03</span>
+            <h3 class="panel-statement" style="color: var(--accent-blue);">CONNECT</h3>
+            <p class="panel-headline-desc">You find people you want to know.</p>
+            <p class="panel-detail">Meet peers across sound, color, and 3D who share your vision.</p>
+          </div>
+          <div class="film-panel-card" style="border-color: var(--accent-violet);">
+            <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-violet);">STAGE 04</span>
+            <h3 class="panel-statement" style="color: var(--accent-violet);">COLLABORATE</h3>
+            <p class="panel-headline-desc">You build something together.</p>
+            <p class="panel-detail">Combining unique skills into a unified project.</p>
+          </div>
+          <div class="film-panel-card" style="border-color: var(--accent-yellow);">
+            <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-yellow);">STAGE 05</span>
+            <h3 class="panel-statement" style="color: var(--accent-yellow);">COMPLETE</h3>
+            <p class="panel-headline-desc">The work gets finished.</p>
+            <p class="panel-detail">Polished, locked, and published in native fidelity.</p>
+          </div>
+          <div class="film-panel-card" style="border-color: var(--accent-red);">
+            <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-red);">STAGE 06</span>
+            <h3 class="panel-statement" style="color: var(--accent-red);">REPUTATION</h3>
+            <p class="panel-headline-desc">Work becomes part of your identity.</p>
+            <p class="panel-detail">Your finished work compounds into enduring trust.</p>
+          </div>
+          <div class="film-panel-card" style="border-color: var(--accent-blue);">
+            <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-blue);">STAGE 07</span>
+            <h3 class="panel-statement" style="color: var(--accent-blue);">OPPORTUNITY</h3>
+            <p class="panel-headline-desc">Next project starts from past work.</p>
+            <p class="panel-detail">Inbound requests find you based on verified craft.</p>
+          </div>
+          <div class="film-panel-card" style="border-color: var(--accent-yellow);">
+            <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-yellow);">STAGE 08</span>
+            <h3 class="panel-statement" style="color: var(--accent-yellow);">CREATE AGAIN</h3>
+            <p class="panel-headline-desc">The natural momentum of craft.</p>
+            <p class="panel-detail">Bigger vision, higher standard, compounding career.</p>
+          </div>
+        </div>
+
+        <div class="film-sprocket-row">
+          <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHALLENGE SECTION -->
+  <section class="challenge-section" id="challenge">
+    <div class="container">
+      <span class="section-chapter-tag reveal">THE ARENA</span>
+      <h2 class="section-main-title reveal">CREATIVITY NEEDS<br>A PLAYGROUND.</h2>
+      
+      <p style="max-width: 800px; font-size: 1.2rem; color: var(--text-muted); margin-bottom: 3rem;">
+        Not every project has a client. Not every idea needs a deadline. Sometimes you just need a reason to make something. That's what EditorSpace challenges are for.
+      </p>
+
+      <div class="challenge-main-stage reveal-group">
+        <div class="collectible-challenge-poster">
+          <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 6px;">
+            <strong>BRIEF ISSUE #001</strong>
+            <span style="background: var(--accent-red); color: #fff; padding: 2px 6px; font-size: 0.7rem;">BRIEF IN BOUND</span>
+          </div>
+          <h3 style="font-size: 3rem; line-height: 0.9;">THE FIRST BRIEF IS COMING.</h3>
+          <p style="font-weight: 800; color: var(--accent-blue);">ONE BRIEF. MANY INTERPRETATIONS. YOUR STYLE. YOUR CRAFT. YOUR TAKE.</p>
+          <div style="background: #000; color: var(--accent-yellow); padding: 12px; font-family: var(--font-display); font-size: 1.4rem; text-align: center;">
+            MAKE SOMETHING WORTH REMEMBERING.
+          </div>
+        </div>
+
+        <div class="challenge-brief-console">
+          <div class="console-tab-header">
+            <button class="c-tab active" onclick="switchTab('tab-brief', this)">BRIEF DROP</button>
+            <button class="c-tab" onclick="switchTab('tab-dossier', this)">HOW IT WORKS</button>
+            <button class="c-tab" onclick="switchTab('tab-prizes', this)">PRIZES</button>
+          </div>
+          <div class="console-panel-content">
+            <div id="tab-brief" class="tab-pane active">
+              <span style="color: var(--accent-yellow); font-weight: 900; font-size: 0.8rem;">● BRIEF DROP // Q4 2026</span>
+              <h4 style="font-size: 2rem;">CHOOSE YOUR CRAFT. INTERPRET THE BRIEF.</h4>
+              <p style="color: var(--text-muted);">The EditorSpace challenge is a pure creative challenge. You get the prompt; you interpret it through your own style, format, and medium.</p>
+              <a href="#waitlist" class="btn-portal" style="margin-top: 1rem;">
+                <span class="cta-text-primary">GET READY FOR CHALLENGE #001 →</span>
+                <span class="cta-text-secondary">JOIN WAITLIST TO BE NOTIFIED AT DROP</span>
+              </a>
+            </div>
+
+            <div id="tab-dossier" class="tab-pane">
+              <h4 style="font-size: 1.8rem;">THE 7-STEP CHALLENGE DOSSIER</h4>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <p><strong>01. GET THE BRIEF:</strong> Download official prompt & guidelines.</p>
+                <p><strong>02. CREATE:</strong> Interpret through your medium and aesthetic.</p>
+                <p><strong>03. SUBMIT:</strong> Upload your cut with project notes.</p>
+                <p><strong>04. GET DISCOVERED:</strong> Piece joins the public arena showcase.</p>
+                <p><strong>05. FINALISTS:</strong> Shortlist selected by jury.</p>
+                <p><strong>06. COMMUNITY VOTE:</strong> Community picks top favorites.</p>
+                <p><strong>07. WIN:</strong> Hardware rewards & permanent spotlight.</p>
+              </div>
+            </div>
+
+            <div id="tab-prizes" class="tab-pane">
+              <h4 style="font-size: 1.8rem;">CREATIVE HARDWARE REWARDS</h4>
+              <p>🥇 <strong>1ST PLACE:</strong> Mac Mini workstation + Founding Pass</p>
+              <p>🥈 <strong>2ND PLACE:</strong> DJI Osmo Action 6 cinema camera</p>
+              <p>🥉 <strong>3RD PLACE:</strong> 1TB High-Speed NVMe SSD scratch drive</p>
             </div>
           </div>
-          <span class="reel-time font-mono">02:14:08</span>
         </div>
-        <div class="reel-item">
-          <div class="reel-thumb">📹</div>
-          <div class="reel-info">
-            <h4>Nova Skincare — Launch Spot</h4>
-            <div class="reel-meta">
-              <span class="reel-tag">Commercial</span>
-              <div class="reel-progress"><span style="width:78%;"></span></div>
+      </div>
+
+      <!-- PRIZE CARDS -->
+      <div class="prizes-highlight-strip reveal-group">
+        <div class="prize-highlight-card p1">
+          <span style="font-size: 0.75rem; font-weight: 900; color: var(--text-muted);">1ST PLACE</span>
+          <h3 style="font-size: 2.2rem;">MAC MINI</h3>
+          <p style="color: var(--text-muted);">Next-generation Apple workstation for pro post-production.</p>
+          <span style="color: var(--accent-yellow); font-size: 0.8rem; font-weight: 800; margin-top: auto;">+ Lifetime Founding Creator Pass</span>
+        </div>
+        <div class="prize-highlight-card p2">
+          <span style="font-size: 0.75rem; font-weight: 900; color: var(--text-muted);">2ND PLACE</span>
+          <h3 style="font-size: 2.2rem;">DJI OSMO ACTION 6</h3>
+          <p style="color: var(--text-muted);">Pro high-frame-rate cinema action camera for field captures.</p>
+          <span style="color: var(--accent-blue); font-size: 0.8rem; font-weight: 800; margin-top: auto;">+ Featured Creator Spotlight</span>
+        </div>
+        <div class="prize-highlight-card p3">
+          <span style="font-size: 0.75rem; font-weight: 900; color: var(--text-muted);">3RD PLACE</span>
+          <h3 style="font-size: 2.2rem;">1TB HIGH-SPEED SSD</h3>
+          <p style="color: var(--text-muted);">High-speed portable NVMe edit scratch drive.</p>
+          <span style="color: var(--accent-red); font-size: 0.8rem; font-weight: 800; margin-top: auto;">+ Community Showcase Feature</span>
+        </div>
+      </div>
+
+      <!-- WHY COMPETE -->
+      <div class="why-compete-section-block reveal">
+        <h3 style="font-size: 3rem;">WHY COMPETE?</h3>
+        <div class="why-compete-grid reveal-group">
+          <div class="why-compete-card"><span>01</span><h4>TO TEST YOUR CRAFT.</h4></div>
+          <div class="why-compete-card"><span>02</span><h4>TO MAKE SOMETHING YOU WOULDN'T OTHERWISE MAKE.</h4></div>
+          <div class="why-compete-card"><span>03</span><h4>TO SEE HOW OTHER CREATIVES THINK.</h4></div>
+          <div class="why-compete-card"><span>04</span><h4>TO GET YOUR WORK IN FRONT OF NEW PEOPLE.</h4></div>
+          <div class="why-compete-card"><span>05</span><h4>TO DISCOVER CREATORS YOU DIDN'T KNOW.</h4></div>
+          <div class="why-compete-card"><span>06</span><h4>TO HAVE SOMETHING TO BE PROUD OF.</h4></div>
+          <div class="why-compete-card highlight-win"><span>07</span><h4 style="color: var(--accent-yellow);">AND MAYBE... TO WIN SOMETHING REALLY GOOD.</h4></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO IS THIS FOR -->
+  <section class="who-section">
+    <div class="container">
+      <span class="section-chapter-tag reveal">DISCIPLINES</span>
+      <h2 class="section-main-title reveal">WHO IS THIS FOR?</h2>
+
+      <div class="roles-cards-grid reveal-group">
+        <div class="role-focus-card" style="border-color: var(--accent-red); box-shadow: 8px 8px 0px var(--accent-red);">
+          <span style="color: var(--accent-red); font-size: 0.7rem; font-weight: 900;">RHYTHM & PACING</span>
+          <h3 style="font-size: 2.2rem;">EDITORS.</h3>
+        </div>
+        <div class="role-focus-card" style="border-color: var(--accent-yellow); box-shadow: 8px 8px 0px var(--accent-yellow);">
+          <span style="color: var(--accent-yellow); font-size: 0.7rem; font-weight: 900;">CINEMATOGRAPHY & VISION</span>
+          <h3 style="font-size: 2.2rem;">FILMMAKERS.</h3>
+        </div>
+        <div class="role-focus-card" style="border-color: var(--accent-blue); box-shadow: 8px 8px 0px var(--accent-blue);">
+          <span style="color: var(--accent-blue); font-size: 0.7rem; font-weight: 900;">KINETIC & 3D DYNAMICS</span>
+          <h3 style="font-size: 2.2rem;">MOTION DESIGNERS.</h3>
+        </div>
+        <div class="role-focus-card" style="border-color: var(--accent-violet); box-shadow: 8px 8px 0px var(--accent-violet);">
+          <span style="color: var(--accent-violet); font-size: 0.7rem; font-weight: 900;">SIMULATION & COMPOSITING</span>
+          <h3 style="font-size: 2.2rem;">VFX ARTISTS.</h3>
+        </div>
+        <div class="role-focus-card" style="border-color: var(--accent-yellow); box-shadow: 8px 8px 0px var(--accent-yellow);">
+          <span style="color: var(--accent-yellow); font-size: 0.7rem; font-weight: 900;">IDENTITY & GRID</span>
+          <h3 style="font-size: 2.2rem;">DESIGNERS.</h3>
+        </div>
+        <div class="role-focus-card" style="border-color: var(--accent-red); box-shadow: 8px 8px 0px var(--accent-red);">
+          <span style="color: var(--accent-red); font-size: 0.7rem; font-weight: 900;">LIGHT & FRAME</span>
+          <h3 style="font-size: 2.2rem;">PHOTOGRAPHERS.</h3>
+        </div>
+        <div class="role-focus-card" style="border-color: var(--accent-blue); box-shadow: 8px 8px 0px var(--accent-blue);">
+          <span style="color: var(--accent-blue); font-size: 0.7rem; font-weight: 900;">WEIGHT & TIMING</span>
+          <h3 style="font-size: 2.2rem;">ANIMATORS.</h3>
+        </div>
+        <div class="role-focus-card full-span" style="border-color: var(--accent-yellow); box-shadow: 10px 10px 0px var(--accent-yellow); text-align: center; padding: 4rem 2rem;">
+          <h3 style="font-size: clamp(2rem, 4.5vw, 3.8rem); color: var(--text-muted);">IF YOU MAKE THINGS,</h3>
+          <h2 style="font-size: clamp(3rem, 7vw, 7rem); color: var(--accent-yellow);">YOU BELONG HERE.</h2>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WAITLIST SECTION -->
+  <section class="waitlist-section" id="waitlist">
+    <div class="container">
+      
+      <!-- FORM BLOCK -->
+      <div id="waitlist-form-block" class="waitlist-form-block reveal">
+        <div>
+          <span class="section-chapter-tag">EARLY ACCESS</span>
+          <h2 style="font-size: 3.5rem; line-height: 0.95;">COME BUILD IT WITH US.</h2>
+          <p style="color: var(--text-muted); font-size: 1.1rem; margin-top: 0.5rem;">
+            EditorSpace is still being built. The community is just beginning. Join early, be there for the first challenges, and help shape what this space becomes.
+          </p>
+        </div>
+
+        <div id="custom-error-box" class="custom-error-box">
+          <h4 id="error-title" style="color: var(--accent-red); font-size: 1.3rem;">THAT EMAIL DOESN'T LOOK RIGHT.</h4>
+          <p id="error-desc" style="font-size: 0.9rem;">Please enter a valid email address.</p>
+        </div>
+
+        <form id="waitlist-form" onsubmit="handleWaitlistSubmit(event)" style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <div class="form-inputs-grid">
+            <div class="form-field-group">
+              <label for="w-name">YOUR NAME</label>
+              <input type="text" id="w-name" placeholder="Enter your name" required>
+            </div>
+            <div class="form-field-group">
+              <label for="w-email">EMAIL ADDRESS</label>
+              <input type="email" id="w-email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-field-group">
+              <label for="w-discipline">WHAT DO YOU CREATE?</label>
+              <select id="w-discipline" required>
+                <option value="" disabled selected>Select your discipline</option>
+                <option value="video-editing">Video Editing</option>
+                <option value="filmmaking">Filmmaking</option>
+                <option value="motion-design">Motion Design</option>
+                <option value="vfx">VFX</option>
+                <option value="graphic-design">Graphic Design</option>
+                <option value="photography">Photography</option>
+                <option value="animation">Animation</option>
+                <option value="sound">Sound</option>
+                <option value="writing">Writing</option>
+                <option value="creative-direction">Creative Direction</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-field-group">
+              <label for="w-portfolio">PORTFOLIO / INSTAGRAM <span style="color: var(--text-muted);">(OPTIONAL)</span></label>
+              <input type="text" id="w-portfolio" placeholder="Paste a link or @handle">
             </div>
           </div>
-          <span class="reel-time font-mono">00:00:32</span>
-        </div>
-        <div class="reel-item">
-          <div class="reel-thumb">🎞️</div>
-          <div class="reel-info">
-            <h4>The Long Way Home</h4>
-            <div class="reel-meta">
-              <span class="reel-tag">Documentary</span>
-              <div class="reel-progress"><span style="width:100%;"></span></div>
-            </div>
-          </div>
-          <span class="reel-time font-mono">00:48:12</span>
-        </div>
-        <div class="reel-item">
-          <div class="reel-thumb">🎵</div>
-          <div class="reel-info">
-            <h4>Bloom Collective</h4>
-            <div class="reel-meta">
-              <span class="reel-tag">Music Video</span>
-              <div class="reel-progress"><span style="width:45%;"></span></div>
-            </div>
-          </div>
-          <span class="reel-time font-mono">00:03:41</span>
-        </div>
+
+          <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;">
+            <input type="checkbox" checked required>
+            <span>I want to hear when EditorSpace launches and when new challenges open.</span>
+          </label>
+
+          <button type="submit" id="submit-btn" class="btn-portal" style="width: 100%; align-items: center;">
+            <span class="cta-text-primary" id="btn-text">JOIN THE WAITLIST →</span>
+            <span class="cta-text-secondary">BE AMONG THE FIRST CREATORS INSIDE</span>
+          </button>
+          
+          <p style="text-align: center; font-size: 0.72rem; color: var(--text-muted); font-weight: 800;">
+            NO SPAM. JUST EDITORSPACE UPDATES, CHALLENGES AND LAUNCH NEWS.
+          </p>
+        </form>
       </div>
-      <div class="hero-portfolio-foot">
-        <a href="#" class="hp-link">View full portfolio →</a>
-        <span class="hp-live"><span class="d"></span>Live from the community</span>
+
+      <!-- SUCCESS BLOCK -->
+      <div id="waitlist-success-card" class="waitlist-success-card reveal-scale">
+        <div style="background: var(--accent-red); color: #fff; font-size: 0.75rem; font-weight: 900; padding: 4px 14px; transform: rotate(-2deg);">
+          FOUNDING CREATOR PASS
+        </div>
+        <h2 style="font-size: clamp(3.5rem, 8vw, 6.5rem); color: var(--accent-yellow); line-height: 0.9;">YOU'RE IN.</h2>
+        <h3 style="font-size: 2.2rem;">WELCOME TO EDITORSPACE.</h3>
+        
+        <div class="creator-id-reveal-box">
+          <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-yellow); letter-spacing: 0.15em;">OFFICIAL WAITLIST POSITION</span>
+          <div class="id-number" id="assigned-id">CREATOR #0247</div>
+          <span style="font-size: 0.75rem; font-weight: 800; color: var(--accent-red);">EARLY ACCESS BATCH</span>
+        </div>
+
+        <div>
+          <h4>THE SPACE IS BEING BUILT.</h4>
+          <p style="color: var(--text-muted);">YOU'LL HEAR FROM US WHEN THE DOORS OPEN.</p>
+        </div>
+
+        <div style="background: rgba(0, 85, 255, 0.1); border: 2px solid var(--accent-blue); padding: 1.25rem; width: 100%;">
+          <span style="color: var(--accent-blue); font-weight: 900; font-size: 0.75rem;">FIRST CHALLENGE:</span>
+          <h4 style="font-size: 1.6rem;">COMING SOON.</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">You will receive the creative brief and starter kit directly via email.</p>
+        </div>
+
+        <a href="https://instagram.com/editorspace.create" target="_blank" rel="noopener noreferrer" style="color: var(--accent-yellow); font-weight: 800; text-decoration: none;">
+          FOLLOW @EDITORSPACE.CREATE ↗
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FINAL MONOLITHIC STATEMENT -->
+  <section style="background: #000; padding: 10vw 0; text-align: center;">
+    <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 4rem;">
+      <div>
+        <span style="color: var(--accent-red); font-weight: 900; font-size: 0.85rem; letter-spacing: 0.15em;">YOU MADE IT THIS FAR.</span>
+        <h2 style="font-size: clamp(3.2rem, 8.5vw, 8.5rem); line-height: 0.92;">MAYBE YOUR<br>CREATIVE WORLD<br>BELONGS HERE.</h2>
+      </div>
+
+      <div style="background: var(--bg-surface); border: 4px solid var(--text-primary); box-shadow: 18px 18px 0px var(--accent-red); padding: 4rem 3rem; max-width: 900px; width: 100%;">
+        <span style="font-family: var(--font-display); font-size: 2.2rem; color: var(--accent-red); font-weight: 900; letter-spacing: 0.18em;">EDITORSPACE</span>
+        <h3 style="font-size: clamp(3rem, 7.5vw, 7.5rem); line-height: 0.9; margin: 1rem 0;">YOUR CREATIVE<br>WORLD<br>DESERVES<br>A HOME.</h3>
+        <p style="font-family: var(--font-display); font-size: 1.8rem; color: var(--accent-yellow); letter-spacing: 0.05em; margin-bottom: 2rem;">
+          CONNECT. COMPETE. COLLABORATE.
+        </p>
+        <a href="#waitlist" class="btn-portal" style="align-items: center;">
+          <span class="cta-text-primary">JOIN THE WAITLIST →</span>
+        </a>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="scrubber">
-    <div class="scrubber-top">
-      <span class="scrubber-timecode font-mono" id="timecode">00:00:00:00</span>
-      <span class="scrubber-rec"><span class="d"></span>REC — 2,847 EDITORS ACTIVE</span>
-    </div>
-    <div class="waveform" id="waveform"></div>
-    <div class="scrubber-ruler">
-      <div class="playhead"></div>
-      <div class="chapter" style="left:12%;"><div class="cdot"></div><span>TIMELINE SYNC</span></div>
-      <div class="chapter" style="left:38%;"><div class="cdot"></div><span>AI COLOR</span></div>
-      <div class="chapter" style="left:64%;"><div class="cdot"></div><span>VERSION CTRL</span></div>
-      <div class="chapter" style="left:88%;"><div class="cdot"></div><span>CLOUD RENDER</span></div>
-    </div>
-  </div>
-</section>
-
-<section class="trusted">
-  <div class="trusted-label">Trusted by creators at</div>
-  <div class="marquee-wrap">
-    <div class="marquee">
-      <span>NETFLIX</span><span>PIXAR</span><span>A24</span><span>HBO</span><span>SONY</span><span>APPLE TV+</span>
-      <span>NETFLIX</span><span>PIXAR</span><span>A24</span><span>HBO</span><span>SONY</span><span>APPLE TV+</span>
-    </div>
-  </div>
-</section>
-
-<section class="stat-band">
-  <div class="stat-band-grid">
-    <div class="stat-band-item animate-in"><h3><span>2.1M+</span></h3><p>Cuts synced across teams</p></div>
-    <div class="stat-band-item animate-in"><h3>340K</h3><p>Hours rendered last month</p></div>
-    <div class="stat-band-item animate-in"><h3>99.98%</h3><p>Uptime over the last year</p></div>
-    <div class="stat-band-item animate-in"><h3>&lt;40ms</h3><p>Average timeline sync latency</p></div>
-  </div>
-</section>
-
-<section class="tools-strip">
-  <div class="tools-strip-inner">
-    <div class="section-header animate-in" style="margin-bottom:3rem;">
-      <span class="eyebrow">// WORKS WITH YOUR STACK</span>
-      <h2 class="font-hero wipeText" style="font-size:clamp(2rem,4vw,3rem);">PLUGS INTO YOUR PIPELINE</h2>
-      <p>No new NLE to learn. EditorsSpace layers on top of the tools you already use.</p>
-    </div>
-    <div class="tools-grid">
-      <div class="tool-chip animate-in"><div class="glyph">P</div><div><div class="tname">Premiere Pro</div><div class="tsub">v22+ / panel</div></div></div>
-      <div class="tool-chip animate-in"><div class="glyph">R</div><div><div class="tname">DaVinci Resolve</div><div class="tsub">v18+ / native</div></div></div>
-      <div class="tool-chip animate-in"><div class="glyph">F</div><div><div class="tname">Final Cut Pro</div><div class="tsub">v10.6+ / XML</div></div></div>
-      <div class="tool-chip animate-in"><div class="glyph">A</div><div><div class="tname">Avid Media Composer</div><div class="tsub">v2023+ / AAF</div></div></div>
-      <div class="tool-chip animate-in"><div class="glyph">◐</div><div><div class="tname">ProRes / RAW</div><div class="tsub">codec native</div></div></div>
-      <div class="tool-chip animate-in"><div class="glyph">▤</div><div><div class="tname">ProTools</div><div class="tsub">audio bridge</div></div></div>
-      <div class="tool-chip animate-in"><div class="glyph">☁</div><div><div class="tname">Frame.io</div><div class="tsub">review import</div></div></div>
-      <div class="tool-chip animate-in"><div class="glyph">⬡</div><div><div class="tname">LucidLink</div><div class="tsub">storage sync</div></div></div>
-    </div>
-  </div>
-</section>
-
-<section class="features" id="features">
-  <div class="section-header animate-in">
-    <span class="eyebrow">// 01 CAPABILITIES</span>
-    <h2 class="font-hero wipeText">EVERYTHING YOU NEED</h2>
-    <p>Tools that disappear so you can focus on what matters — the story.</p>
-  </div>
-  <div class="features-grid">
-    <div class="feature-card animate-in">
-      <div class="feature-top"><div class="feature-icon">✦</div><span class="feature-tag">NEW</span></div>
-      <h3>Timeline Sync</h3>
-      <p>Real-time collaborative editing with frame-accurate synchronization across all major NLEs.</p>
-      <span class="feature-stat">40ms average sync latency</span>
-    </div>
-    <div class="feature-card animate-in">
-      <div class="feature-top"><div class="feature-icon">◈</div></div>
-      <h3>AI Color Match</h3>
-      <p>Intelligent color grading that learns your style and applies it consistently across scenes.</p>
-      <span class="feature-stat">Trained on 6,200+ graded reels</span>
-    </div>
-    <div class="feature-card animate-in">
-      <div class="feature-top"><div class="feature-icon">▣</div><span class="feature-tag">HOT</span></div>
-      <h3>Version Control</h3>
-      <p>Git-like versioning for video projects. Branch, merge, and never lose a cut again.</p>
-      <span class="feature-stat">Unlimited branch history</span>
-    </div>
-    <div class="feature-card animate-in">
-      <div class="feature-top"><div class="feature-icon">◉</div></div>
-      <h3>Cloud Render</h3>
-      <p>Distributed rendering across global GPU clusters. Export in minutes, not hours.</p>
-      <span class="feature-stat">340K hours rendered / month</span>
-    </div>
-    <div class="feature-card animate-in">
-      <div class="feature-top"><div class="feature-icon">✹</div></div>
-      <h3>Client Review</h3>
-      <p>Frame-accurate comments, draw-on-video feedback, and approval workflows built for creatives.</p>
-      <span class="feature-stat">3.2x faster sign-off on average</span>
-    </div>
-    <div class="feature-card animate-in">
-      <div class="feature-top"><div class="feature-icon">✻</div><span class="feature-tag">BETA</span></div>
-      <h3>Asset Marketplace</h3>
-      <p>Stock footage, LUTs, sound effects and templates from creators around the world, in one place.</p>
-      <span class="feature-stat">18K+ licensed assets</span>
-    </div>
-    <div class="feature-card animate-in">
-      <div class="feature-top"><div class="feature-icon">⬢</div></div>
-      <h3>Multi-Cam Sync</h3>
-      <p>Auto-align footage from unlimited camera angles using audio waveform matching, no timecode required.</p>
-      <span class="feature-stat">Up to 32 simultaneous angles</span>
-    </div>
-    <div class="feature-card animate-in">
-      <div class="feature-top"><div class="feature-icon">⟡</div><span class="feature-tag">NEW</span></div>
-      <h3>Smart Transcode</h3>
-      <p>Background transcoding that picks the right proxy codec for your machine and network automatically.</p>
-      <span class="feature-stat">Up to 60% smaller proxies</span>
-    </div>
-    <div class="feature-card animate-in">
-      <div class="feature-top"><div class="feature-icon">◐</div></div>
-      <h3>Live Annotations</h3>
-      <p>Drop pins on a frame, tag a collaborator, and resolve notes without ever leaving the timeline.</p>
-      <span class="feature-stat">Threaded, timestamped comments</span>
-    </div>
-  </div>
-</section>
-
-<section class="workflow" id="workflow">
-  <div class="section-header animate-in">
-    <span class="eyebrow">// 02 PROCESS</span>
-    <h2 class="font-hero wipeText">FROM FOOTAGE TO FINAL CUT</h2>
-    <p>Four steps. Zero friction.</p>
-  </div>
-  <div class="workflow-steps">
-    <div class="workflow-step animate-in">
-      <div class="step-number">01</div>
-      <h3>Import</h3>
-      <p>Drop in footage from any camera, any codec, straight into a synced timeline.</p>
-    </div>
-    <div class="workflow-step animate-in">
-      <div class="step-number">02</div>
-      <h3>Edit</h3>
-      <p>Cut collaboratively with your team, live, no lock files or version chaos.</p>
-    </div>
-    <div class="workflow-step animate-in">
-      <div class="step-number">03</div>
-      <h3>Review</h3>
-      <p>Send a link. Clients comment directly on the frame, no downloads required.</p>
-    </div>
-    <div class="workflow-step animate-in">
-      <div class="step-number">04</div>
-      <h3>Deliver</h3>
-      <p>Render in the cloud and export to every platform and spec you need.</p>
-    </div>
-  </div>
-</section>
-
-<section class="community" id="community">
-  <div class="community-grid">
-    <div class="community-visual animate-scale">
-      <div class="panel panel-1">
-        <div class="panel-content">
-          <div class="avatar-row"><div class="avatar">R</div><div class="avatar">M</div><div class="avatar">+42</div></div>
-          <h4>Film Editors Guild</h4>
-          <span>1,240 members &bull; Active now</span>
+  <!-- FOOTER -->
+  <footer class="footer-section">
+    <div class="container">
+      <div class="footer-top-row">
+        <div>
+          <h3 style="font-size: 2.2rem;">EDITORSPACE</h3>
+          <p style="color: var(--text-muted);">Your creative world deserves a home.</p>
+          <p style="font-family: var(--font-display); font-size: 0.85rem; color: var(--accent-yellow); margin-top: 4px;">CONNECT. COMPETE. COLLABORATE.</p>
+          <a href="https://instagram.com/editorspace.create" target="_blank" rel="noopener noreferrer" style="color: var(--accent-yellow); font-weight: 800; font-size: 0.85rem; text-decoration: none; display: block; margin-top: 8px;">@editorspace.create ↗</a>
+        </div>
+        <div class="footer-nav-links">
+          <a href="#about">ABOUT</a>
+          <a href="#why">WHY EDITORSPACE</a>
+          <a href="#challenge">CHALLENGE</a>
+          <a href="mailto:hello@editorspace.com">CONTACT</a>
+          <a href="https://instagram.com/editorspace.create" target="_blank" rel="noopener noreferrer">INSTAGRAM</a>
+        </div>
+        <div>
+          <a href="#waitlist" style="font-family: var(--font-display); font-size: 1.5rem; color: var(--accent-red); text-decoration: none; border-bottom: 2px solid var(--accent-red); padding-bottom: 4px;">JOIN THE WAITLIST →</a>
         </div>
       </div>
-      <div class="panel panel-2">
-        <div class="panel-content">
-          <div class="avatar-row"><div class="avatar">S</div><div class="avatar">K</div><div class="avatar">+18</div></div>
-          <h4>Colorist Collective</h4>
-          <span>856 members &bull; 3 projects live</span>
+      <div style="border-top: 1px solid rgba(248, 246, 240, 0.1); margin-top: 4rem; padding-top: 2rem; display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); flex-wrap: wrap; gap: 1rem;">
+        <span>© 2026 EDITORSPACE. ALL RIGHTS RESERVED.</span>
+        <span>BUILT AROUND YOUR CREATIVE WORLD. &nbsp;·&nbsp; <a href="#" id="adminLink" style="color: var(--text-muted); text-decoration: underline; cursor: pointer;">Admin</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ADMIN AUTH MODAL -->
+  <div class="admin-overlay" id="adminAuthOverlay">
+    <div class="admin-modal">
+      <button class="admin-modal-close" id="adminAuthClose" aria-label="Close">✕</button>
+      <h3>Admin Access</h3>
+      <p class="admin-sub">Enter the admin password to view waitlist signups.</p>
+      <form id="adminAuthForm">
+        <div class="admin-field">
+          <label for="adminPassword">Password</label>
+          <input type="password" id="adminPassword" name="password" placeholder="••••••••" required autocomplete="off">
         </div>
+        <button type="submit" class="btn-portal" style="width: 100%; align-items: center;" id="adminAuthSubmitBtn">
+          <span class="cta-text-primary">UNLOCK →</span>
+        </button>
+        <p class="admin-msg" id="adminAuthMsg"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN TABLE MODAL -->
+  <div class="admin-overlay" id="adminTableOverlay">
+    <div class="admin-modal admin-table-modal">
+      <button class="admin-modal-close" id="adminTableClose" aria-label="Close">✕</button>
+      <h3>Waitlist Signups</h3>
+      <div class="admin-toolbar">
+        <span class="admin-count" id="adminCount">Loading…</span>
+        <button class="admin-refresh-btn" id="adminRefreshBtn">Refresh</button>
       </div>
-      <div class="panel panel-3">
-        <div class="panel-content">
-          <div class="avatar-row"><div class="avatar">N</div><div class="avatar">T</div><div class="avatar">V</div><div class="avatar">+67</div></div>
-          <h4>Indie Filmmakers</h4>
-          <span>2,103 members &bull; Growing fast</span>
-        </div>
-      </div>
-    </div>
-    <div class="community-text animate-in">
-      <span class="eyebrow">// 03 COMMUNITY</span>
-      <h2 class="font-hero" style="margin-top:1rem;">A UNIVERSE OF CREATORS</h2>
-      <p>Join thousands of editors, colorists, sound designers, and filmmakers who have found their creative home. Share work, get feedback, find collaborators, and grow together.</p>
-      <button class="btn-primary magnetic">Explore Communities</button>
-      <div class="stat-row">
-        <div class="stat-item"><h3><span class="count" data-target="12">0</span>K+</h3><span>Creators</span></div>
-        <div class="stat-item"><h3><span class="count" data-target="4.8" data-decimal="1">0</span>K</h3><span>Projects</span></div>
-        <div class="stat-item"><h3><span class="count" data-target="89">0</span></h3><span>Countries</span></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="adminTable">
+          <thead>
+            <tr><th>Name</th><th>Email</th><th>Discipline</th><th>Portfolio</th><th>Joined</th></tr>
+          </thead>
+          <tbody id="adminTableBody"></tbody>
+        </table>
+        <div class="admin-empty" id="adminEmptyState" style="display:none;">No signups yet.</div>
       </div>
     </div>
   </div>
-</section>
 
-<section class="ai-director">
-  <div class="ai-content">
-    <div class="ai-text animate-in">
-      <span class="eyebrow">// 04 INTELLIGENCE</span>
-      <h2 class="font-hero" style="margin-top:1rem;">MEET YOUR <span>AI DIRECTOR</span></h2>
-      <p>Trained on thousands of hours of award-winning cinema. The AI Director analyzes your footage, suggests cuts, identifies emotional beats, and helps you tell better stories.</p>
-      <ul class="ai-features-list">
-        <li>Automatic scene detection and tagging</li>
-        <li>Emotion-based cut suggestions</li>
-        <li>Pacing analysis and recommendations</li>
-        <li>Continuity error detection</li>
-        <li>Style matching to reference films</li>
-      </ul>
-      <button class="btn-primary magnetic" style="margin-top:2rem;">Try AI Director</button>
-    </div>
-    <div class="ai-visual animate-scale">
-      <div class="orbit orbit-1">
-        <div class="orbit-node" style="top:-19px;left:50%;transform:translateX(-50%);">▶</div>
-        <div class="orbit-node" style="bottom:-19px;left:50%;transform:translateX(-50%);">⟡</div>
-      </div>
-      <div class="orbit orbit-2">
-        <div class="orbit-node" style="top:50%;left:-19px;transform:translateY(-50%);">◐</div>
-        <div class="orbit-node" style="top:50%;right:-19px;transform:translateY(-50%);">▤</div>
-      </div>
-      <div class="orbit orbit-3"></div>
-      <div class="ai-center font-mono">AI</div>
-    </div>
-  </div>
-</section>
+  <!-- Config: loaded from a gitignored config.js so secrets never live in this file -->
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-<section class="testimonials">
-  <div class="section-header animate-in">
-    <span class="eyebrow">// 05 FEEDBACK</span>
-    <h2 class="font-hero wipeText">CREATOR LOVE</h2>
-    <p>Do not take our word for it. Hear from the community.</p>
-  </div>
-  <div class="testimonials-grid">
-    <div class="testimonial-card animate-in">
-      <p class="testimonial-text">EditorsSpace completely transformed how our post team works. We cut our delivery time in half and the client review process is actually enjoyable now.</p>
-      <div class="testimonial-author"><div class="avatar">SK</div><div><div class="name">Sarah Kim</div><div class="role">Lead Editor, Netflix</div></div></div>
-    </div>
-    <div class="testimonial-card animate-in">
-      <p class="testimonial-text">The AI Director spotted a continuity error I missed after three reviews. It is like having a seasoned assistant editor who never sleeps.</p>
-      <div class="testimonial-author"><div class="avatar">MR</div><div><div class="name">Marcus Rodriguez</div><div class="role">Feature Film Editor</div></div></div>
-    </div>
-    <div class="testimonial-card animate-in">
-      <p class="testimonial-text">Finally, a platform that understands creatives. The community aspect alone is worth it — I have found collaborators for every project this year.</p>
-      <div class="testimonial-author"><div class="avatar">AP</div><div><div class="name">Ananya Patel</div><div class="role">Independent Filmmaker</div></div></div>
-    </div>
-    <div class="testimonial-card animate-in">
-      <p class="testimonial-text">Version control alone saved a documentary project when a colorist overwrote three days of grading. We rolled back to a clean branch in under a minute.</p>
-      <div class="testimonial-author"><div class="avatar">DL</div><div><div class="name">David Lin</div><div class="role">Colorist, Freelance</div></div></div>
-    </div>
-  </div>
-  <div class="rating-strip animate-in">
-    <span class="stars">★★★★★</span>
-    <span class="font-mono">4.9/5 across 2,300+ reviews on G2 and Capterra</span>
-  </div>
-</section>
-
-<section class="pricing" id="pricing">
-  <div class="section-header animate-in">
-    <span class="eyebrow">// 06 PRICING</span>
-    <h2 class="font-hero wipeText">SIMPLE PRICING</h2>
-    <p>Start free. Scale as you grow. No hidden fees.</p>
-  </div>
-  <div class="pricing-grid">
-    <div class="pricing-card animate-in">
-      <div class="pricing-name">Creator</div>
-      <div class="pricing-desc">Perfect for solo editors and hobbyists.</div>
-      <div class="pricing-price">$0<span>/month</span></div>
-      <ul class="pricing-features">
-        <li>3 active projects</li><li>1080p exports</li><li>Basic collaboration</li><li>Community access</li><li>5GB cloud storage</li>
-      </ul>
-      <button class="pricing-btn">Get Started Free</button>
-    </div>
-    <div class="pricing-card featured animate-in">
-      <div class="pricing-name">Pro</div>
-      <div class="pricing-desc">For professional editors and small teams.</div>
-      <div class="pricing-price">$29<span>/month</span></div>
-      <ul class="pricing-features">
-        <li>Unlimited projects</li><li>4K + HDR exports</li><li>Real-time collaboration</li><li>AI Director access</li><li>Client review tools</li><li>100GB cloud storage</li>
-      </ul>
-      <button class="pricing-btn">Start Pro Trial</button>
-    </div>
-    <div class="pricing-card animate-in">
-      <div class="pricing-name">Studio</div>
-      <div class="pricing-desc">For production houses and agencies.</div>
-      <div class="pricing-price">$99<span>/month</span></div>
-      <ul class="pricing-features">
-        <li>Everything in Pro</li><li>Team management</li><li>Custom branding</li><li>Priority support</li><li>API access</li><li>Unlimited storage</li>
-      </ul>
-      <button class="pricing-btn">Contact Sales</button>
-    </div>
-  </div>
-
-  <div class="compare-table animate-in">
-    <div class="compare-row head"><div>Feature</div><div>Creator</div><div>Pro</div><div>Studio</div></div>
-    <div class="compare-row"><div class="label">Active projects</div><div>3</div><div>Unlimited</div><div>Unlimited</div></div>
-    <div class="compare-row"><div class="label">Export resolution</div><div>1080p</div><div>4K + HDR</div><div>4K + HDR</div></div>
-    <div class="compare-row"><div class="label">Cloud storage</div><div>5GB</div><div>100GB</div><div>Unlimited</div></div>
-    <div class="compare-row"><div class="label">AI Director access</div><div class="no">—</div><div class="yes">✓</div><div class="yes">✓</div></div>
-    <div class="compare-row"><div class="label">Team management</div><div class="no">—</div><div class="no">—</div><div class="yes">✓</div></div>
-    <div class="compare-row"><div class="label">API access</div><div class="no">—</div><div class="no">—</div><div class="yes">✓</div></div>
-    <div class="compare-row"><div class="label">Support</div><div>Community</div><div>Email</div><div>Priority + Slack</div></div>
-  </div>
-</section>
-
-<section class="faq" id="faq">
-  <div class="section-header animate-in">
-    <span class="eyebrow">// 07 FAQ</span>
-    <h2 class="font-hero wipeText">QUESTIONS?</h2>
-    <p>We have got answers.</p>
-  </div>
-  <div class="faq-list">
-    <div class="faq-item animate-in">
-      <div class="faq-question"><span>Which editing software does EditorsSpace support?</span><span class="icon">+</span></div>
-      <div class="faq-answer">We currently support Adobe Premiere Pro, DaVinci Resolve, Final Cut Pro, and Avid Media Composer. Our plugin architecture means new NLEs are added regularly based on community demand.</div>
-    </div>
-    <div class="faq-item animate-in">
-      <div class="faq-question"><span>Is my footage secure in the cloud?</span><span class="icon">+</span></div>
-      <div class="faq-answer">Absolutely. We use end-to-end encryption, SOC 2 Type II compliance, and zero-knowledge architecture. Your raw footage never leaves your local machine unless you explicitly choose to sync it.</div>
-    </div>
-    <div class="faq-item animate-in">
-      <div class="faq-question"><span>Can I cancel my subscription anytime?</span><span class="icon">+</span></div>
-      <div class="faq-answer">Yes, no questions asked. You can cancel anytime from your account settings. If you cancel, you will retain access until the end of your billing period.</div>
-    </div>
-    <div class="faq-item animate-in">
-      <div class="faq-question"><span>Do you offer educational discounts?</span><span class="icon">+</span></div>
-      <div class="faq-answer">Yes! Students and educators get 50% off Pro plans. Contact our support team with your .edu email or institutional ID to get set up.</div>
-    </div>
-    <div class="faq-item animate-in">
-      <div class="faq-question"><span>How does billing work for teams?</span><span class="icon">+</span></div>
-      <div class="faq-answer">Studio plans bill per seat with volume discounts starting at 10 seats. You can add or remove editors mid-cycle and we prorate automatically — no need to contact support.</div>
-    </div>
-    <div class="faq-item animate-in">
-      <div class="faq-question"><span>What happens to my projects if I downgrade?</span><span class="icon">+</span></div>
-      <div class="faq-answer">Your projects and version history stay intact. You will just be limited to the active project count and export resolution of your new plan going forward.</div>
-    </div>
-  </div>
-</section>
-
-<section class="final-cta">
-  <h2 class="font-hero wipeText">READY TO CREATE?</h2>
-  <p>Join the waitlist and be among the first to experience the future of creative collaboration.</p>
-  <button class="btn-primary magnetic js-open-waitlist">Join Waitlist Now</button>
-</section>
-
-<footer>
-  <div class="footer-brand">
-    <a href="#" class="logo">Editors<span>Space</span></a>
-    <p>The creative operating system for editors, filmmakers, and creators worldwide. Built for the edit bay.</p>
-    <form class="footer-newsletter" id="footerWaitlistForm">
-      <input type="email" placeholder="you@studio.com" aria-label="Email address" id="footerEmailInput" required>
-      <button type="submit" id="footerSubmitBtn">Subscribe</button>
-    </form>
-    <p id="footerFormMsg" class="font-mono" style="font-size:0.72rem;margin-top:0.5rem;min-height:1em;"></p>
-    <div class="footer-social">
-      <a href="#" aria-label="X / Twitter">𝕏</a>
-      <a href="#" aria-label="Instagram">◎</a>
-      <a href="#" aria-label="YouTube">▶</a>
-      <a href="#" aria-label="LinkedIn">in</a>
-    </div>
-  </div>
-  <div class="footer-links">
-    <h4>Product</h4>
-    <ul><li><a href="#">Features</a></li><li><a href="#">Pricing</a></li><li><a href="#">Changelog</a></li><li><a href="#">Roadmap</a></li><li><a href="#">Integrations</a></li></ul>
-  </div>
-  <div class="footer-links">
-    <h4>Company</h4>
-    <ul><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Careers</a></li><li><a href="#">Contact</a></li><li><a href="#">Press Kit</a></li></ul>
-  </div>
-  <div class="footer-links">
-    <h4>Legal</h4>
-    <ul><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="#">Security</a></li><li><a href="#">Status</a></li></ul>
-  </div>
-  <div class="footer-bottom">&copy; 2026 EDITORSSPACE. ALL RIGHTS RESERVED. &nbsp;·&nbsp; <a href="#" id="adminLink" style="color:var(--text-muted);text-decoration:underline;cursor:pointer;">Admin</a></div>
-</footer>
-
-<div class="wl-overlay" id="wlOverlay">
-  <div class="wl-modal">
-    <button class="wl-close" id="wlClose" aria-label="Close">✕</button>
-    <h3>Join the Waitlist</h3>
-    <p class="wl-sub">Be among the first editors and creators to get access to EditorsSpace.</p>
-    <form id="wlForm">
-      <div class="wl-field">
-        <label for="wlName">Name</label>
-        <input type="text" id="wlName" name="name" placeholder="Your name" required>
-      </div>
-      <div class="wl-field">
-        <label for="wlEmail">Email</label>
-        <input type="email" id="wlEmail" name="email" placeholder="you@studio.com" required>
-      </div>
-      <div class="wl-field">
-        <label for="wlRole">I am a...</label>
-        <select id="wlRole" name="role">
-          <option value="editor">Video Editor</option>
-          <option value="colorist">Colorist</option>
-          <option value="filmmaker">Filmmaker / Creator</option>
-          <option value="studio">Studio / Agency</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-      <button type="submit" class="wl-submit" id="wlSubmitBtn">Join Waitlist</button>
-      <p class="wl-msg" id="wlMsg"></p>
-    </form>
-  </div>
-</div>
-
-<div class="wl-overlay" id="adminAuthOverlay">
-  <div class="wl-modal admin-modal">
-    <button class="wl-close" id="adminAuthClose" aria-label="Close">✕</button>
-    <h3>Admin Access</h3>
-    <p class="wl-sub">Enter the admin password to view waitlist signups.</p>
-    <form id="adminAuthForm">
-      <div class="wl-field">
-        <label for="adminPassword">Password</label>
-        <input type="password" id="adminPassword" name="password" placeholder="••••••••" required autocomplete="off">
-      </div>
-      <button type="submit" class="wl-submit" id="adminAuthSubmitBtn">Unlock</button>
-      <p class="wl-msg" id="adminAuthMsg"></p>
-    </form>
-  </div>
-</div>
-
-<div class="wl-overlay" id="adminTableOverlay">
-  <div class="wl-modal admin-table-modal">
-    <button class="wl-close" id="adminTableClose" aria-label="Close">✕</button>
-    <h3>Waitlist Signups</h3>
-    <div class="admin-toolbar">
-      <span class="admin-count" id="adminCount">Loading…</span>
-      <button class="admin-refresh" id="adminRefreshBtn">Refresh</button>
-    </div>
-    <div class="admin-table-wrap">
-      <table class="admin-table" id="adminTable">
-        <thead>
-          <tr><th>Name</th><th>Email</th><th>Role</th><th>Source</th><th>Joined</th></tr>
-        </thead>
-        <tbody id="adminTableBody"></tbody>
-      </table>
-      <div class="admin-empty" id="adminEmptyState" style="display:none;">No signups yet.</div>
-    </div>
-  </div>
-</div>
-
-<!-- Config: loaded from a gitignored config.js so secrets never live in this file -->
-<script src="config.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
-// ====== Supabase config — pulled from window.APP_CONFIG (see config.js) ======
-const SUPABASE_URL = window.APP_CONFIG?.SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = window.APP_CONFIG?.SUPABASE_ANON_KEY || '';
-let supabaseClient = null;
-let supabaseConfigured = false;
-try {
-  if (SUPABASE_URL.startsWith('http') && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith('YOUR_')) {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    supabaseConfigured = true;
-  } else {
-    console.warn('Supabase not configured yet — fill in config.js (see config.example.js).');
-  }
-} catch (err) {
-  console.error('Failed to initialize Supabase client:', err);
-}
-
-// ====== Waitlist modal open/close ======
-const wlOverlay = document.getElementById('wlOverlay');
-const wlClose = document.getElementById('wlClose');
-const wlForm = document.getElementById('wlForm');
-const wlMsg = document.getElementById('wlMsg');
-const wlSubmitBtn = document.getElementById('wlSubmitBtn');
-
-function openWaitlist() {
-  wlOverlay.classList.add('open');
-  wlMsg.textContent = '';
-  wlMsg.className = 'wl-msg';
-  document.body.style.overflow = 'hidden';
-}
-function closeWaitlist() {
-  wlOverlay.classList.remove('open');
-  document.body.style.overflow = '';
-}
-document.querySelectorAll('.js-open-waitlist').forEach(btn => {
-  btn.addEventListener('click', openWaitlist);
-});
-wlClose.addEventListener('click', closeWaitlist);
-wlOverlay.addEventListener('click', (e) => { if (e.target === wlOverlay) closeWaitlist(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeWaitlist(); });
-
-// ====== Modal form submit -> Supabase ======
-wlForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const name = document.getElementById('wlName').value.trim();
-  const email = document.getElementById('wlEmail').value.trim();
-  const role = document.getElementById('wlRole').value;
-
-  wlSubmitBtn.disabled = true;
-  wlSubmitBtn.textContent = 'Joining...';
-  wlMsg.textContent = '';
-  wlMsg.className = 'wl-msg';
-
-  if (!supabaseConfigured) {
-    wlMsg.textContent = 'Backend not connected yet — add your Supabase URL/key in config.js.';
-    wlMsg.classList.add('error');
-    wlSubmitBtn.disabled = false;
-    wlSubmitBtn.textContent = 'Join Waitlist';
-    return;
-  }
-
-  const { error } = await supabaseClient
-    .from('waitlist')
-    .insert([{ name, email, role, source: 'modal' }]);
-
-  wlSubmitBtn.disabled = false;
-  wlSubmitBtn.textContent = 'Join Waitlist';
-
-  if (error) {
-    if (error.code === '23505') {
-      wlMsg.textContent = "You're already on the waitlist with that email.";
-    } else {
-      wlMsg.textContent = 'Something went wrong. Please try again.';
-      console.error('Supabase insert error:', error);
-    }
-    wlMsg.classList.add('error');
-  } else {
-    wlMsg.textContent = "You're on the list! We'll be in touch soon.";
-    wlMsg.classList.add('success');
-    wlForm.reset();
-    setTimeout(closeWaitlist, 1800);
-  }
-});
-
-// ====== Footer newsletter form -> Supabase ======
-const footerForm = document.getElementById('footerWaitlistForm');
-const footerEmailInput = document.getElementById('footerEmailInput');
-const footerSubmitBtn = document.getElementById('footerSubmitBtn');
-const footerFormMsg = document.getElementById('footerFormMsg');
-
-footerForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = footerEmailInput.value.trim();
-  if (!email) return;
-
-  footerSubmitBtn.disabled = true;
-  footerFormMsg.textContent = '';
-  footerFormMsg.className = 'font-mono';
-
-  if (!supabaseConfigured) {
-    footerFormMsg.textContent = 'Backend not connected yet.';
-    footerFormMsg.classList.add('error');
-    footerSubmitBtn.disabled = false;
-    return;
-  }
-
-  const { error } = await supabaseClient
-    .from('waitlist')
-    .insert([{ email, source: 'footer' }]);
-
-  footerSubmitBtn.disabled = false;
-
-  if (error) {
-    footerFormMsg.textContent = error.code === '23505'
-      ? 'Already subscribed with that email.'
-      : 'Something went wrong. Try again.';
-    footerFormMsg.classList.add('error');
-    console.error('Supabase insert error:', error);
-  } else {
-    footerFormMsg.textContent = 'Subscribed! Welcome aboard.';
-    footerFormMsg.classList.add('success');
-    footerForm.reset();
-  }
-});
-
-// ====== Admin panel ======
-const ADMIN_PASSWORD = window.APP_CONFIG?.ADMIN_PASSWORD || '';
-
-const adminLink = document.getElementById('adminLink');
-const adminAuthOverlay = document.getElementById('adminAuthOverlay');
-const adminAuthClose = document.getElementById('adminAuthClose');
-const adminAuthForm = document.getElementById('adminAuthForm');
-const adminAuthMsg = document.getElementById('adminAuthMsg');
-const adminPasswordInput = document.getElementById('adminPassword');
-const adminAuthSubmitBtn = document.getElementById('adminAuthSubmitBtn');
-
-const adminTableOverlay = document.getElementById('adminTableOverlay');
-const adminTableClose = document.getElementById('adminTableClose');
-const adminTableBody = document.getElementById('adminTableBody');
-const adminCount = document.getElementById('adminCount');
-const adminEmptyState = document.getElementById('adminEmptyState');
-const adminRefreshBtn = document.getElementById('adminRefreshBtn');
-const adminTableEl = document.getElementById('adminTable');
-
-adminLink.addEventListener('click', (e) => {
-  e.preventDefault();
-  adminAuthMsg.textContent = '';
-  adminAuthMsg.className = 'wl-msg';
-  adminPasswordInput.value = '';
-  adminAuthOverlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-});
-function closeAdminAuth() {
-  adminAuthOverlay.classList.remove('open');
-  document.body.style.overflow = '';
-}
-adminAuthClose.addEventListener('click', closeAdminAuth);
-adminAuthOverlay.addEventListener('click', (e) => { if (e.target === adminAuthOverlay) closeAdminAuth(); });
-
-adminAuthForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (ADMIN_PASSWORD && adminPasswordInput.value === ADMIN_PASSWORD) {
-    closeAdminAuth();
-    openAdminTable();
-  } else {
-    adminAuthMsg.textContent = 'Incorrect password.';
-    adminAuthMsg.className = 'wl-msg error';
-  }
-});
-
-function closeAdminTable() {
-  adminTableOverlay.classList.remove('open');
-  document.body.style.overflow = '';
-}
-adminTableClose.addEventListener('click', closeAdminTable);
-adminTableOverlay.addEventListener('click', (e) => { if (e.target === adminTableOverlay) closeAdminTable(); });
-adminRefreshBtn.addEventListener('click', loadWaitlistEntries);
-
-function openAdminTable() {
-  adminTableOverlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  loadWaitlistEntries();
-}
-
-async function loadWaitlistEntries() {
-  adminCount.textContent = 'Loading…';
-  adminTableBody.innerHTML = '';
-  adminEmptyState.style.display = 'none';
-  adminTableEl.style.display = '';
-
-  if (!supabaseConfigured) {
-    adminCount.textContent = 'Backend not connected';
-    adminEmptyState.textContent = 'Add your Supabase URL/key in config.js to load signups.';
-    adminEmptyState.style.display = 'block';
-    adminTableEl.style.display = 'none';
-    return;
-  }
-
-  const { data, error } = await supabaseClient
-    .from('waitlist')
-    .select('name, email, role, source, created_at')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    adminCount.textContent = 'Error loading data';
-    adminEmptyState.textContent = 'Could not load signups. Check console for details.';
-    adminEmptyState.style.display = 'block';
-    adminTableEl.style.display = 'none';
-    console.error('Supabase select error:', error);
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    adminCount.textContent = '0 signups';
-    adminEmptyState.textContent = 'No signups yet.';
-    adminEmptyState.style.display = 'block';
-    adminTableEl.style.display = 'none';
-    return;
-  }
-
-  adminCount.textContent = `${data.length} signup${data.length === 1 ? '' : 's'}`;
-  adminTableBody.innerHTML = data.map(row => `
-    <tr>
-      <td>${escapeHtml(row.name || '—')}</td>
-      <td>${escapeHtml(row.email || '—')}</td>
-      <td>${escapeHtml(row.role || '—')}</td>
-      <td>${escapeHtml(row.source || '—')}</td>
-      <td>${row.created_at ? new Date(row.created_at).toLocaleString() : '—'}</td>
-    </tr>
-  `).join('');
-}
-
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-</script>
-
-<script>
-const wf = document.getElementById('waveform');
-for (let i = 0; i < 48; i++) {
-  const bar = document.createElement('span');
-  bar.style.animationDelay = (Math.random() * 1.4) + 's';
-  bar.style.height = (20 + Math.random() * 80) + '%';
-  wf.appendChild(bar);
-}
-
-let frame = 0;
-const tc = document.getElementById('timecode');
-setInterval(() => {
-  frame++;
-  const totalSeconds = Math.floor(frame / 24);
-  const ff = frame % 24;
-  const hh = Math.floor(totalSeconds / 3600);
-  const mm = Math.floor((totalSeconds % 3600) / 60);
-  const ss = totalSeconds % 60;
-  const pad = n => String(n).padStart(2, '0');
-  tc.textContent = `${pad(hh)}:${pad(mm)}:${pad(ss)}:${pad(ff)}`;
-}, 1000 / 24);
-
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-let particles = [];
-let mouse = { x: null, y: null };
-
-function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-class Particle {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 1.8 + 0.4;
-    this.speedX = (Math.random() - 0.5) * 0.4;
-    this.speedY = (Math.random() - 0.5) * 0.4;
-    this.color = Math.random() > 0.5 ? 'rgba(255, 42, 75, ' : 'rgba(245, 230, 37, ';
-    this.opacity = Math.random() * 0.4 + 0.08;
-  }
-  update() {
-    this.x += this.speedX; this.y += this.speedY;
-    if (this.x > canvas.width) this.x = 0; if (this.x < 0) this.x = canvas.width;
-    if (this.y > canvas.height) this.y = 0; if (this.y < 0) this.y = canvas.height;
-    if (mouse.x != null) {
-      const dx = mouse.x - this.x, dy = mouse.y - this.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < 140) {
-        const force = (140 - distance) / 140;
-        this.x -= dx * force * 0.02; this.y -= dy * force * 0.02;
+  <!-- VANILLA JAVASCRIPT LOGIC -->
+  <script>
+    // ====== Supabase config — pulled from window.APP_CONFIG (see config.js) ======
+    const SUPABASE_URL = window.APP_CONFIG?.SUPABASE_URL || '';
+    const SUPABASE_ANON_KEY = window.APP_CONFIG?.SUPABASE_ANON_KEY || '';
+    let supabaseClient = null;
+    let supabaseConfigured = false;
+    try {
+      if (SUPABASE_URL.startsWith('http') && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith('YOUR_')) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        supabaseConfigured = true;
+      } else {
+        console.warn('Supabase not configured yet — fill in config.js (see config.example.js).');
       }
+    } catch (err) {
+      console.error('Failed to initialize Supabase client:', err);
     }
-  }
-  draw() {
-    ctx.fillStyle = this.color + this.opacity + ')';
-    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-  }
-}
-function initParticles() {
-  particles = [];
-  const count = Math.min(window.innerWidth / 12, 80);
-  for (let i = 0; i < count; i++) particles.push(new Particle());
-}
-initParticles();
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => { p.update(); p.draw(); });
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < 100) {
-        ctx.strokeStyle = `rgba(255, 42, 75, ${0.08 * (1 - distance / 100)})`;
-        ctx.lineWidth = 0.5;
-        ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+
+    // Header Scroll Effect
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 40) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
       }
-    }
-  }
-  requestAnimationFrame(animateParticles);
-}
-animateParticles();
-window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
-window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+    });
 
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-}, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
-document.querySelectorAll('.animate-in, .animate-scale, .wipeText').forEach(el => observer.observe(el));
+    // Scroll-triggered flow animations
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.reveal, .reveal-scale, .reveal-group').forEach(el => revealObserver.observe(el));
 
-const counted = new WeakSet();
-const countObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && !counted.has(entry.target)) {
-      counted.add(entry.target);
-      const el = entry.target;
-      const target = parseFloat(el.dataset.target);
-      const decimals = parseInt(el.dataset.decimal || '0');
-      const duration = 1400;
-      const start = performance.now();
-      function tick(now) {
-        const p = Math.min((now - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - p, 3);
-        el.textContent = (target * eased).toFixed(decimals);
-        if (p < 1) requestAnimationFrame(tick);
+    // Floating particles
+    (function () {
+      const canvas = document.getElementById('particles');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let mouse = { x: null, y: null };
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.size = Math.random() * 1.8 + 0.4;
+          this.speedX = (Math.random() - 0.5) * 0.35;
+          this.speedY = (Math.random() - 0.5) * 0.35;
+          this.color = Math.random() > 0.5 ? 'rgba(255, 42, 75, ' : 'rgba(245, 230, 37, ';
+          this.opacity = Math.random() * 0.35 + 0.08;
+        }
+        update() {
+          this.x += this.speedX; this.y += this.speedY;
+          if (this.x > canvas.width) this.x = 0; if (this.x < 0) this.x = canvas.width;
+          if (this.y > canvas.height) this.y = 0; if (this.y < 0) this.y = canvas.height;
+          if (mouse.x != null) {
+            const dx = mouse.x - this.x, dy = mouse.y - this.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < 140) {
+              const force = (140 - distance) / 140;
+              this.x -= dx * force * 0.02; this.y -= dy * force * 0.02;
+            }
+          }
+        }
+        draw() {
+          ctx.fillStyle = this.color + this.opacity + ')';
+          ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+        }
       }
-      requestAnimationFrame(tick);
+      function initParticles() {
+        particles = [];
+        const count = Math.min(window.innerWidth / 14, 70);
+        for (let i = 0; i < count; i++) particles.push(new Particle());
+      }
+      function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < 100) {
+              ctx.strokeStyle = `rgba(255, 42, 75, ${0.08 * (1 - distance / 100)})`;
+              ctx.lineWidth = 0.5;
+              ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(animateParticles);
+      }
+      if (!prefersReducedMotion) {
+        initParticles();
+        animateParticles();
+        window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
+        window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+      }
+    })();
+
+    // Mobile Nav Toggle
+    const navBurger = document.getElementById('navBurger');
+    const navMobilePanel = document.getElementById('navMobilePanel');
+    const navScrim = document.getElementById('navScrim');
+
+    function openMobileNav() {
+      navBurger.classList.add('open');
+      navBurger.setAttribute('aria-expanded', 'true');
+      navMobilePanel.classList.add('open');
+      navScrim.classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
-  });
-}, { threshold: 0.4 });
-document.querySelectorAll('.count').forEach(el => countObserver.observe(el));
+    function closeMobileNav() {
+      navBurger.classList.remove('open');
+      navBurger.setAttribute('aria-expanded', 'false');
+      navMobilePanel.classList.remove('open');
+      navScrim.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    navBurger.addEventListener('click', () => {
+      navMobilePanel.classList.contains('open') ? closeMobileNav() : openMobileNav();
+    });
+    navScrim.addEventListener('click', closeMobileNav);
+    navMobilePanel.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeMobileNav(); closeAdminAuth(); closeAdminTable(); } });
 
-document.querySelectorAll('.faq-question').forEach(question => {
-  question.addEventListener('click', () => {
-    const item = question.parentElement;
-    const isActive = item.classList.contains('active');
-    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
-    if (!isActive) item.classList.add('active');
-  });
-});
+    // Console Tab Switcher
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.c-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const targetPane = document.getElementById(tabId);
+      if (targetPane) targetPane.classList.add('active');
+    }
 
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-});
+    // ====== Waitlist Form Handler -> Supabase ======
+    async function handleWaitlistSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('w-name').value.trim();
+      const email = document.getElementById('w-email').value.trim().toLowerCase();
+      const discipline = document.getElementById('w-discipline').value;
+      const portfolio = document.getElementById('w-portfolio').value.trim();
+      const errorBox = document.getElementById('custom-error-box');
+      const errorTitle = document.getElementById('error-title');
+      const errorDesc = document.getElementById('error-desc');
+      const submitBtn = document.getElementById('submit-btn');
+      const btnText = document.getElementById('btn-text');
 
-window.addEventListener('scroll', () => {
-  const nav = document.querySelector('nav');
-  nav.classList.toggle('scrolled', window.scrollY > 80);
-  const scrollTop = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  document.getElementById('scroll-progress').style.width = (scrollTop / docHeight * 100) + '%';
-});
+      errorBox.classList.remove('show');
 
-document.querySelectorAll('.magnetic').forEach(btn => {
-  btn.addEventListener('mousemove', e => {
-    const r = btn.getBoundingClientRect();
-    const x = e.clientX - r.left - r.width / 2;
-    const y = e.clientY - r.top - r.height / 2;
-    btn.style.transform = `translate(${x * 0.18}px, ${y * 0.35}px)`;
-  });
-  btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
-});
+      // Validation
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        errorTitle.innerText = "THAT EMAIL DOESN'T LOOK RIGHT.";
+        errorDesc.innerText = "Please verify your email address format.";
+        errorBox.classList.add('show');
+        return;
+      }
 
-document.querySelectorAll('.btn-primary, .btn-secondary, .nav-cta, .pricing-btn').forEach(btn => {
-  btn.style.position = btn.style.position || 'relative';
-  btn.style.overflow = 'hidden';
-  btn.addEventListener('click', function (e) {
-    const rect = btn.getBoundingClientRect();
-    const ripple = document.createElement('span');
-    ripple.className = 'ripple';
-    const size = Math.max(rect.width, rect.height);
-    ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
-    btn.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 650);
-  });
-});
-</script>
+      if (!supabaseConfigured) {
+        errorTitle.innerText = "BACKEND NOT CONNECTED YET.";
+        errorDesc.innerText = "Add your Supabase URL/key in config.js to enable signups.";
+        errorBox.classList.add('show');
+        return;
+      }
+
+      btnText.innerText = "JOINING EDITORSPACE...";
+      submitBtn.disabled = true;
+
+      const { error } = await supabaseClient
+        .from('waitlist')
+        .insert([{ name, email, discipline, portfolio, source: 'waitlist_page' }]);
+
+      if (error) {
+        submitBtn.disabled = false;
+        btnText.innerText = "JOIN THE WAITLIST →";
+        if (error.code === '23505') {
+          errorTitle.innerText = "YOU'RE ALREADY IN.";
+          errorDesc.innerText = "GOOD NEWS — WE DIDN'T FORGET YOU. Your spot is locked.";
+        } else {
+          errorTitle.innerText = "SOMETHING WENT WRONG.";
+          errorDesc.innerText = "Please try again in a moment.";
+          console.error('Supabase insert error:', error);
+        }
+        errorBox.classList.add('show');
+        return;
+      }
+
+      // Position number = total signups so far
+      let idNum = '0001';
+      const { count } = await supabaseClient
+        .from('waitlist')
+        .select('*', { count: 'exact', head: true });
+      if (count) idNum = String(count).padStart(4, '0');
+      document.getElementById('assigned-id').innerText = "CREATOR #" + idNum;
+
+      document.getElementById('waitlist-form-block').style.display = 'none';
+      document.getElementById('waitlist-success-card').classList.add('show', 'in-view');
+    }
+
+    // ====== Admin panel ======
+    const ADMIN_PASSWORD = window.APP_CONFIG?.ADMIN_PASSWORD || '';
+
+    const adminLink = document.getElementById('adminLink');
+    const adminAuthOverlay = document.getElementById('adminAuthOverlay');
+    const adminAuthClose = document.getElementById('adminAuthClose');
+    const adminAuthForm = document.getElementById('adminAuthForm');
+    const adminAuthMsg = document.getElementById('adminAuthMsg');
+    const adminPasswordInput = document.getElementById('adminPassword');
+
+    const adminTableOverlay = document.getElementById('adminTableOverlay');
+    const adminTableClose = document.getElementById('adminTableClose');
+    const adminTableBody = document.getElementById('adminTableBody');
+    const adminCount = document.getElementById('adminCount');
+    const adminEmptyState = document.getElementById('adminEmptyState');
+    const adminRefreshBtn = document.getElementById('adminRefreshBtn');
+    const adminTableEl = document.getElementById('adminTable');
+
+    adminLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      adminAuthMsg.textContent = '';
+      adminAuthMsg.className = 'admin-msg';
+      adminPasswordInput.value = '';
+      adminAuthOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+    function closeAdminAuth() {
+      adminAuthOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    adminAuthClose.addEventListener('click', closeAdminAuth);
+    adminAuthOverlay.addEventListener('click', (e) => { if (e.target === adminAuthOverlay) closeAdminAuth(); });
+
+    adminAuthForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (ADMIN_PASSWORD && adminPasswordInput.value === ADMIN_PASSWORD) {
+        closeAdminAuth();
+        openAdminTable();
+      } else {
+        adminAuthMsg.textContent = 'Incorrect password.';
+        adminAuthMsg.className = 'admin-msg error';
+      }
+    });
+
+    function closeAdminTable() {
+      adminTableOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    adminTableClose.addEventListener('click', closeAdminTable);
+    adminTableOverlay.addEventListener('click', (e) => { if (e.target === adminTableOverlay) closeAdminTable(); });
+    adminRefreshBtn.addEventListener('click', loadWaitlistEntries);
+
+    function openAdminTable() {
+      adminTableOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      loadWaitlistEntries();
+    }
+
+    async function loadWaitlistEntries() {
+      adminCount.textContent = 'Loading…';
+      adminTableBody.innerHTML = '';
+      adminEmptyState.style.display = 'none';
+      adminTableEl.style.display = '';
+
+      if (!supabaseConfigured) {
+        adminCount.textContent = 'Backend not connected';
+        adminEmptyState.textContent = 'Add your Supabase URL/key in config.js to load signups.';
+        adminEmptyState.style.display = 'block';
+        adminTableEl.style.display = 'none';
+        return;
+      }
+
+      const { data, error } = await supabaseClient
+        .from('waitlist')
+        .select('name, email, discipline, portfolio, created_at')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        adminCount.textContent = 'Error loading data';
+        adminEmptyState.textContent = 'Could not load signups. Check console for details.';
+        adminEmptyState.style.display = 'block';
+        adminTableEl.style.display = 'none';
+        console.error('Supabase select error:', error);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        adminCount.textContent = '0 signups';
+        adminEmptyState.textContent = 'No signups yet.';
+        adminEmptyState.style.display = 'block';
+        adminTableEl.style.display = 'none';
+        return;
+      }
+
+      adminCount.textContent = `${data.length} signup${data.length === 1 ? '' : 's'}`;
+      adminTableBody.innerHTML = data.map(row => `
+        <tr>
+          <td>${escapeHtml(row.name || '—')}</td>
+          <td>${escapeHtml(row.email || '—')}</td>
+          <td>${escapeHtml(row.discipline || '—')}</td>
+          <td>${escapeHtml(row.portfolio || '—')}</td>
+          <td>${row.created_at ? new Date(row.created_at).toLocaleString() : '—'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
 </body>
 </html>
